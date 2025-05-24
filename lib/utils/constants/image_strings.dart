@@ -5,8 +5,20 @@
 class TImages {
 
   // -- App Logos
-  static const String darkAppLogo = "assets/logos/t-store-splash-logo-black.png";
-  static const String lightAppLogo = "assets/logos/t-store-splash-logo-white.png";
+  static const String appLogo = "assets/logos/app_logo.png";
+  static const String notification = "assets/icons/notification.png";
+  static const String dashboard = "assets/icons/dashboard.svg";
+  static const String createdTrips = "assets/icons/created_trips.svg";
+  static const String completedTrips = "assets/icons/completed_trips.svg";
+  static const String addTrips = "assets/icons/add_trips.svg";
+  static const String activeTrips = "assets/icons/active_trips.svg";
+  static const String appSettings = "assets/icons/setting.svg";
+  static const String notes = "assets/icons/notes.svg";
+  static const String holidays = "assets/icons/holidays.svg";
+  static const String upArrow = "assets/icons/trend_arrow.svg";
+  static const String calender = "assets/icons/calender.svg";
+  static const String add = "assets/icons/add.svg";
+  static const String addTrip = "assets/icons/add_trip.svg";
 
   // -- Default Images
   static const String defaultImage = "assets/images/content/default_image.png";

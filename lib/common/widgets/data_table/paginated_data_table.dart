@@ -56,7 +56,7 @@ class TPaginatedDataTable extends StatelessWidget {
       height: tableHeight,
       child: Theme(
         // Use to set the Backend color
-        data: Theme.of(context).copyWith(cardTheme: const CardTheme(color: Colors.white, elevation: 0)),
+        data: Theme.of(context).copyWith(cardTheme:  const CardThemeData(color: Colors.white, elevation: 0)),
         child: PaginatedDataTable2(
           source: source,
           columns: columns,
@@ -74,7 +74,7 @@ class TPaginatedDataTable extends StatelessWidget {
           onRowsPerPageChanged: (noOfRows) {},
           sortColumnIndex: sortColumnIndex,
           headingTextStyle: Theme.of(context).textTheme.titleMedium,
-          headingRowColor: WidgetStateProperty.resolveWith((states) => TColors.primaryBackground),
+          headingRowColor: WidgetStateProperty.resolveWith((states) => TColors.white),
           empty: TAnimationLoaderWidget(animation: TImages.packageAnimation, text: 'Nothing Found', height: 200, width: 200),
           headingRowDecoration: const BoxDecoration(
             borderRadius: BorderRadius.only(

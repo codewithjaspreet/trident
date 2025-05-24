@@ -24,21 +24,14 @@ class App extends StatelessWidget{
   Widget build(BuildContext context) {
 
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
 
       title: TTexts.appName,
       themeMode: ThemeMode.light,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       getPages: TAppRoutes.allRoutes ,
-      initialRoute: TRoutes.responsiveDesignTut,
-      unknownRoute: GetPage(
-        name: '/not-found',
-        page: () => const Scaffold(
-          body: Center(
-            child: Text('Page not found'),
-          ),
-        ),
-      ),
+      initialRoute: TRoutes.dashBoardScreen,
     );
 
   }
@@ -46,24 +39,5 @@ class App extends StatelessWidget{
 
   }
 
-  class ResponsiveDesignTutorialScreen extends StatelessWidget{
-  const ResponsiveDesignTutorialScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const TSiteTemplate(
-      desktop: Center(
-        child: Text('Desktop Layout'),
-      ),
-      tablet: Center(
-        child: Text('Tablet Layout'),
-      ),
-      mobile: Center(
-        child: Text('Mobile Layout'),
-      ),
-    );
-  }
-
-
-  }
 
