@@ -19,6 +19,7 @@ class TImages {
   static const String calender = "assets/icons/calender.svg";
   static const String add = "assets/icons/add.svg";
   static const String addTrip = "assets/icons/add_trip.svg";
+  static const String closeIcon = "assets/icons/close.svg";
 
   // -- Default Images
   static const String defaultImage = "assets/images/content/default_image.png";

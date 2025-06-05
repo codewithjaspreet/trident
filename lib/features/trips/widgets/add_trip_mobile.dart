@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:trident/common/widgets/containers/rounded_container.dart';
-import 'package:trident/utils/constants/sizes.dart';
+import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
+import 'package:trident/utils/constants/colors.dart';
+import 'mobile/trip_creation_form_1.dart';
+import 'mobile/trip_creation_form_2.dart';
 
 class AddTripMobile extends StatelessWidget {
   const AddTripMobile({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return TRoundedContainer(
-      margin: const EdgeInsets.only(
-          top: TSizes.spaceBtwItems * 6,
-          bottom: TSizes.spaceBtwItems * 2,
-          left: TSizes.spaceBtwItems * 2,
-          right: TSizes.spaceBtwItems * 2),
-      padding: const EdgeInsets.all(TSizes.spaceBtwItems),
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Obx(
-        () => PageView(
-            // controller: ,
-
-            ),
+    final dashboardController = Get.put(DashBoardController());
+    return Scaffold(
+      backgroundColor: TColors.white,
+      body: PageView(
+        controller: dashboardController.pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          TripCreationFormA(
+            dashBoardController: dashboardController,
+          ),
+          TripCreationFormB(
+            dashBoardController: dashboardController,
+          ),
+        ],
       ),
     );
   }

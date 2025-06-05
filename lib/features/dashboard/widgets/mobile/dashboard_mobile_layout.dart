@@ -1,14 +1,9 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
 import 'package:trident/features/dashboard/widgets/mobile/trip_stat_item.dart';
-
-import '../../../../utils/constants/colors.dart';
-import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../trips/widgets/add_trip_mobile.dart';
 import 'filter_options.dart';
@@ -104,12 +99,11 @@ class AddTrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: (){
-        Get.dialog(
+        Get.to(
           const AddTripMobile(),
-          barrierDismissible: true,
-          useSafeArea: true,
+          transition: Transition.rightToLeft,
 
         );
       },

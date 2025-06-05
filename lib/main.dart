@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:trident/common/widgets/layouts/templates/site_layout.dart';
 import 'package:trident/routes/app_routes.dart';
@@ -23,15 +24,26 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      title: TTexts.appName,
-      themeMode: ThemeMode.light,
-      theme: TAppTheme.lightTheme,
-      darkTheme: TAppTheme.darkTheme,
-      getPages: TAppRoutes.allRoutes ,
-      initialRoute: TRoutes.dashBoardScreen,
+    return  ScreenUtilInit(
+      designSize: const Size(375, 812), // iPhone X base size. Adjust if needed.
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: TTexts.appName,
+          themeMode: ThemeMode.light,
+          theme: TAppTheme.lightTheme,
+          darkTheme: TAppTheme.darkTheme,
+          getPages: TAppRoutes.allRoutes,
+          initialRoute: TRoutes.dashBoardScreen,
+          builder: (context, widget) {
+            // Optional for textScale fix
+            ScreenUtil.init(context);
+            return widget!;
+          },
+        );
+      },
     );
 
   }
