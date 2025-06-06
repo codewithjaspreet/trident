@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:trident/features/auth/views/login/login.dart';
 import 'package:trident/routes/routes.dart';
 
 import '../features/dashboard/views/dashboard.dart';
@@ -11,6 +12,11 @@ class TAppRoutes {
     GetPage(
       name: TRoutes.dashBoardScreen,
       page: () => const DashboardScreen(),
+    ),
+
+    GetPage(
+      name: TRoutes.loginScreen,
+      page: () => const TLoginScreen(),
     ),
 
   ];

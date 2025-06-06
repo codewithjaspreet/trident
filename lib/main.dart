@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,10 +9,17 @@ import 'package:trident/utils/constants/text_strings.dart';
 import 'package:trident/utils/theme/theme.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
 
 
   //  removing hash signature from the url
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   setPathUrlStrategy();
   runApp(const App());
@@ -36,7 +44,7 @@ class App extends StatelessWidget{
           theme: TAppTheme.lightTheme,
           darkTheme: TAppTheme.darkTheme,
           getPages: TAppRoutes.allRoutes,
-          initialRoute: TRoutes.dashBoardScreen,
+          initialRoute: TRoutes.loginScreen,
           builder: (context, widget) {
             // Optional for textScale fix
             ScreenUtil.init(context);

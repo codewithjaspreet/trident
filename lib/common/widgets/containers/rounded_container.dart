@@ -14,6 +14,7 @@ class TRoundedContainer extends StatelessWidget {
   ///   - margin: The margin around the container.
   ///   - child: The widget to be placed inside the container.
   ///   - backgroundColor: The background color of the container.
+  ///   - gradient: The gradient background of the container.
   ///   - borderColor: The color of the container's border.
   ///   - showBorder: A flag to determine if the container should have a border.
   const TRoundedContainer({
@@ -28,6 +29,7 @@ class TRoundedContainer extends StatelessWidget {
     this.borderColor = TColors.borderPrimary,
     this.radius = TSizes.cardRadiusLg,
     this.backgroundColor = TColors.white,
+    this.gradient,
     this.onTap,
   });
 
@@ -41,6 +43,7 @@ class TRoundedContainer extends StatelessWidget {
   final EdgeInsets? margin;
   final EdgeInsets padding;
   final Color backgroundColor;
+  final Gradient? gradient;
   final void Function()? onTap;
 
   @override
@@ -53,8 +56,8 @@ class TRoundedContainer extends StatelessWidget {
         padding: padding,
         margin: margin,
         decoration: BoxDecoration(
-
-          color: backgroundColor,
+          color: gradient == null ? backgroundColor : null,
+          gradient: gradient,
           borderRadius: BorderRadius.circular(radius),
           border: showBorder ? Border.all(color: borderColor) : null,
           boxShadow: [

@@ -9,6 +9,8 @@ class TRoutes{
   static const String notesScreen = '/notes';
   static const String holidaysScreen = '/holidays';
   static const String appSettingsScreen = '/appSettings';
+  static const String loginScreen = '/loginScreen';
+  static const String registerScreen = '/registerScreen';
 
 
   static List sideBarMenuItems = [

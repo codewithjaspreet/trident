@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "969312745798",
+    "project_id": "trident-98a49",
+    "storage_bucket": "trident-98a49.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969312745798:android:4a2fdebf1d215a85c98d47",
+        "android_client_info": {
+          "package_name": "com.example.trident"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASgKAFt9jjB30OPHpqmslOCpPhAawRefU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,11 +22,7 @@ class TImages {
   static const String closeIcon = "assets/icons/close.svg";
 
   // -- Default Images
-  static const String defaultImage = "assets/images/content/default_image.png";
-  static const String defaultSingleImageIcon = "assets/images/content/default-image-icon.png";
-  static const String defaultMultiImageIcon = "assets/images/content/default-images-icon.png";
-  static const String defaultAttributeColorsImageIcon = "assets/images/content/tiny-color-palette.png";
-  static const String defaultVariationImageIcon = "assets/images/content/tiny-man-maintaining-a-work-life-balance.png";
+  static const String tridentLogo = "assets/images/content/trident.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";
