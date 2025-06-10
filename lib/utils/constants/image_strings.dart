@@ -23,6 +23,7 @@ class TImages {
 
   // -- Default Images
   static const String tridentLogo = "assets/images/content/trident.png";
+  static const String login = "assets/images/content/login.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";

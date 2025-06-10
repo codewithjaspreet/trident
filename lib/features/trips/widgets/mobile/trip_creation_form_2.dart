@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
+import 'package:trident/features/trips/controllers/trip_controller.dart';
 import '../../../../common/widgets/dropdowns/custom_dropdown.dart';
 import '../../../../common/widgets/textfeilds/custom_textfeild.dart';
 import '../../../../common/widgets/texts/section_heading.dart';
@@ -13,9 +15,10 @@ import '../../../dashboard/controllers/dashboard_controller.dart';
 import '../page_controls.dart';
 
 class TripCreationFormB extends StatelessWidget {
-  const TripCreationFormB({super.key, required this.dashBoardController});
+  const TripCreationFormB({super.key, required this.tripController, required this.sideBarController});
 
-  final DashBoardController dashBoardController;
+  final TripController tripController;
+  final SideBarController sideBarController;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +31,13 @@ class TripCreationFormB extends StatelessWidget {
         child: SingleChildScrollView(
           reverse: true,
           child: Form(
-            key: dashBoardController.tripFormKey,
+            key: tripController.tripFormKey,
             child: Column(
               children: [
                 TSectionHeading(
                   title: 'Route Details',
                   rightSideWidget: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: SvgPicture.asset(
@@ -52,8 +55,10 @@ class TripCreationFormB extends StatelessWidget {
                     'UP32NM3674',
                     'UP32NM3675',
                   ],
-                  hintText: 'Select Vehicle',
-                  onChanged: (String? val) {},
+                  hintText: 'Select Source',
+                  onChanged: (String? val) {
+                    tripController.selectedSource.value = val!;
+                  },
                   title: 'Source',
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
@@ -64,35 +69,13 @@ class TripCreationFormB extends StatelessWidget {
                     'UP32NM3674',
                     'UP32NM3675',
                   ],
-                  hintText: 'Select Vehicle',
+                  hintText: 'Select Destination',
                   onChanged: (String? val) {
-                    dashBoardController.selectedBilledVehicle.value = val!;
+                    tripController.selectedDestination.value = val!;
                   },
                   title: 'Destination',
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
-                TCustomInputField(
-                  controller: dashBoardController.dieselPriceController,
-                  hintText: 'Diesel Rate',
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.done,
-                  title: 'Diesel Rate',
-                ),
-                const SizedBox(height: TSizes.spaceBtwSections),
-                TCustomInputField(
-                  controller:
-                      dashBoardController.totalTripChargesAllocatedController,
-                  hintText: 'Total Trip Charges Allocated',
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
-                  keyboardType: TextInputType.name,
-                  textInputAction: TextInputAction.done,
-                  title: 'Total Trip Charges Allocated',
-                ),
-                const SizedBox(height: TSizes.spaceBtwSections),
-
                 // make a radio button for trip type in a row
 
                 // using google font
@@ -116,19 +99,18 @@ class TripCreationFormB extends StatelessWidget {
                 ),
                 const SizedBox(height: TSizes.spaceBtwItems),
 
-
                 Row(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Obx(() => Radio<String>(
-                          value: 'OS',
-                          groupValue: dashBoardController.tripType.value,
-                          onChanged: (value) {
-                            dashBoardController.tripType.value = value!;
-                          },
-                        )),
+                              value: 'OS',
+                              groupValue: tripController.tripType.value,
+                              onChanged: (value) {
+                                tripController.tripType.value = value!;
+                              },
+                            )),
                         const Text('OS'),
                       ],
                     ),
@@ -137,12 +119,12 @@ class TripCreationFormB extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Obx(() => Radio<String>(
-                            value: 'Local',
-                            groupValue: dashBoardController.tripType.value,
-                            onChanged: (value) {
-                              dashBoardController.tripType.value = value!;
-                            },
-                          )),
+                                value: 'Local',
+                                groupValue: tripController.tripType.value,
+                                onChanged: (value) {
+                                  tripController.tripType.value = value!;
+                                },
+                              )),
                           const Text('Local'),
                         ],
                       ),
@@ -152,7 +134,9 @@ class TripCreationFormB extends StatelessWidget {
                 const SizedBox(height: TSizes.spaceBtwSections),
 
                 PageControls(
-                  dashBoardController: dashBoardController, formKey: dashBoardController.tripFormKey,
+                  tripController: tripController,
+                  formKey: tripController.tripFormKey,
+                  sideBarController: sideBarController,
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
               ],

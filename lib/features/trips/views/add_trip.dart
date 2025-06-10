@@ -4,12 +4,12 @@ import 'package:trident/features/trips/widgets/add_trip_mobile.dart';
 
 import '../../../common/widgets/layouts/templates/site_layout.dart';
 
-class DashboardScreen extends StatelessWidget{
-  const DashboardScreen({super.key});
+class TAddTrip extends StatelessWidget{
+  const TAddTrip({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const TSiteTemplate(
+    return  TSiteTemplate(
       desktop: AddTripDesktop(),
       mobile: AddTripMobile(),
     );

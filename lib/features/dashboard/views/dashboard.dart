@@ -9,9 +9,9 @@ class DashboardScreen extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return const TSiteTemplate(
+    return  TSiteTemplate(
       desktop: DashboardDesktopLayout(),
-      mobile: DashboardMobileLayout(),
+      mobile: const DashboardMobileLayout(),
     );
   }
 

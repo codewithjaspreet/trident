@@ -15,9 +15,8 @@ class TSideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Drawer(
+    return Drawer(
       shape: const BeveledRectangleBorder(),
-
       child: Container(
         decoration: BoxDecoration(
           color: TColors.white,
@@ -28,34 +27,56 @@ class TSideBar extends StatelessWidget {
             ),
           ),
         ),
-        child:  SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Image.asset(
                 TImages.appLogo,
                 height: 70,
               ),
-
-              const SizedBox(height: TSizes.spaceBtwSections,),
-
-               const Padding(
+              const SizedBox(
+                height: TSizes.spaceBtwSections,
+              ),
+              const Padding(
                 padding: EdgeInsets.all(TSizes.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TMenuItem(icon: TImages.dashboard, route: TRoutes.dashBoardScreen, menuName: 'Dashboard',),
-                    TMenuItem(icon: TImages.completedTrips, route: TRoutes.completedTripsScreen, menuName: 'Completed Trips',),
-                    TMenuItem(icon: TImages.activeTrips, route: TRoutes.activeTripsScreen, menuName: 'Active Trips',),
-                    TMenuItem(icon: TImages.createdTrips, route: TRoutes.createdTripsScreen, menuName: 'Created Trips',),
-                    TMenuItem(icon: TImages.addTrips, route: TRoutes.addTripsScreen, menuName: 'Add Trips',),
-                    TMenuItem(icon: TImages.notes, route: TRoutes.notesScreen, menuName: 'Notes',),
-                    TMenuItem(icon: TImages.holidays, route: TRoutes.holidaysScreen, menuName: 'Holidays',),
-                    TMenuItem(icon: TImages.appSettings, route: TRoutes.appSettingsScreen, menuName: 'Settings',),
-
+                    TMenuItem(
+                      icon: TImages.dashboard,
+                      route: TRoutes.dashBoardScreen,
+                      menuName: 'Dashboard',
+                    ),
+                    TMenuItem(
+                      icon: TImages.completedTrips,
+                      route: TRoutes.completedTripsScreen,
+                      menuName: 'Completed Trips',
+                    ),
+                    TMenuItem(
+                      icon: TImages.activeTrips,
+                      route: TRoutes.activeTripsScreen,
+                      menuName: 'Active Trips',
+                    ),
+                    TMenuItem(
+                      icon: TImages.createdTrips,
+                      route: TRoutes.createdTripsScreen,
+                      menuName: 'Created Trips',
+                    ),
+                    TMenuItem(
+                      icon: TImages.addTrips,
+                      route: TRoutes.addTripsScreen,
+                      menuName: 'Add Trips',
+                    ),
+                    // TMenuItem(icon: TImages.notes, route: TRoutes.notesScreen, menuName: 'Notes',),
+                    // TMenuItem(icon: TImages.holidays, route: TRoutes.holidaysScreen, menuName: 'Holidays',),
+                    TMenuItem(
+                      icon: TImages.appSettings,
+                      route: TRoutes.appSettingsScreen,
+                      menuName: 'Settings',
+                    ),
                   ],
                 ),
-
               )
             ],
           ),

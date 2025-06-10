@@ -19,8 +19,8 @@ class TRoutes{
     activeTripsScreen,
     createdTripsScreen,
     addTripsScreen,
-    notesScreen,
-    holidaysScreen,
+    // notesScreen,
+    // holidaysScreen,
     appSettingsScreen
   ];
 

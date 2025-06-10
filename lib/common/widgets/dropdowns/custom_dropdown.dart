@@ -41,7 +41,7 @@ class TDropDown extends StatelessWidget {
         ),
          const SizedBox(height: TSizes.md,),
 
-        CustomDropdown<String>(
+        CustomDropdown<String>.search(
         validator: validator,
         decoration: CustomDropdownDecoration(
           closedBorder:

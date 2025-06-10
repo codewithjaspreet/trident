@@ -95,7 +95,7 @@ class TCustomInputField extends StatelessWidget {
               hintStyle:  TextStyle(
                 color:  const Color(0XFF7D8592).withOpacity(0.6),
 
-                fontSize: 11.sp,
+                fontSize: 11,
               ),
               labelText: labelText,
               helperText: helperText,

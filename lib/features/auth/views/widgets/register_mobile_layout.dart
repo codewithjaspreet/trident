@@ -5,15 +5,17 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
-import 'package:trident/features/auth/views/widgets/register_mobile_layout.dart';
+import 'package:trident/features/auth/views/widgets/login_mobile_layout.dart';
+import 'package:trident/features/dashboard/views/dashboard.dart';
+import 'package:trident/features/dashboard/widgets/mobile/dashboard_mobile_layout.dart';
 import 'package:trident/utils/constants/image_strings.dart';
 import 'package:trident/utils/constants/sizes.dart';
 import '../../../../common/widgets/textfeilds/custom_textfeild.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 
-class LoginMobileLayout extends StatelessWidget {
-  const LoginMobileLayout({super.key});
+class RegisterMobileLayout extends StatelessWidget {
+  const RegisterMobileLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class LoginMobileLayout extends StatelessWidget {
           // Foreground Login Form
           SingleChildScrollView(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom ,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -60,6 +62,24 @@ class LoginMobileLayout extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: TSizes.lg),
                   child: Column(
                     children: [
+                    Row(
+                      children: [
+                        Positioned(
+                          top: 50.h, // adjust based on your UI
+                          left: 16.w,
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.black87, // or white if background is dark
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                       Text(
                         'Get Started now',
                         style: GoogleFonts.inter(
@@ -78,17 +98,62 @@ class LoginMobileLayout extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: TSizes.sm),
-                      Text(
-                        'Create an account or log in to explore our app',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xff6C7278),
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Don’t have an account?',
+                            style: TextStyle(
+                              color: const Color(0xff6C7278),
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          const SizedBox(width: TSizes.sm),
+                          GestureDetector(
+                            onTap: (){
+                              Get.to(const LoginMobileLayout()
+                              , transition: Transition.rightToLeft
+                              );
+                            },
+                            child: Text(
+                              'Log In',
+                              style: TextStyle(
+                                color: const Color(0xff4D81E7),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: TSizes.lg),
-                      const DividerComponent(dividerText: 'Or'),
-                      const SizedBox(height: TSizes.lg),
+                    Row(
+                      children: [
+                        Expanded(child: TRoundedContainer(
+                          child: TCustomInputField(
+                            hintText: 'Lois',
+                            validator: (value) => value == null || value.isEmpty
+                                ? 'Required'
+                                : null,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
+                            title: 'First Name',
+                          ),
+                        ),),
+                       Expanded(child:  TRoundedContainer(
+                         child: TCustomInputField(
+                           hintText: 'Becket',
+                           validator: (value) => value == null || value.isEmpty
+                               ? 'Required'
+                               : null,
+                           keyboardType: TextInputType.visiblePassword,
+                           textInputAction: TextInputAction.done,
+                           title: 'Last Name',
+                         ),
+                       ),)
+                      ],
+                    ),
                       TRoundedContainer(
                         child: TCustomInputField(
                           hintText: 'Loisbecket@gmail.com',
@@ -108,51 +173,34 @@ class LoginMobileLayout extends StatelessWidget {
                               : null,
                           keyboardType: TextInputType.visiblePassword,
                           textInputAction: TextInputAction.done,
-                          title: 'Password',
+                          title: 'Birth Date',
+                        ),
+                      ),
+
+                      TRoundedContainer(
+                        child: TCustomInputField(
+                          hintText: '********',
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Required'
+                              : null,
+                          keyboardType: TextInputType.visiblePassword,
+                          textInputAction: TextInputAction.done,
+                          title: 'Ser Password',
                           obscureText: true,
                         ),
                       ),
-                      TRoundedContainer(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Checkbox(
-                                  value: false,
-                                  onChanged: null,
-                                ),
-                                Text(
-                                  'Remember me',
-                                  style: TextStyle(
-                                    color: const Color(0xff6C7278),
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              'Forget Password ?',
-                              style: TextStyle(
-                                color: const Color(0xff4D81E7),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(height: TSizes.lg),
+
                       TRoundedContainer(
+                        onTap: () => Get.to(const DashboardScreen(),transition: Transition.leftToRight),
                         margin:
-                            const EdgeInsets.symmetric(horizontal: TSizes.md),
+                        const EdgeInsets.symmetric(horizontal: TSizes.md),
                         backgroundColor: const Color(0xff1D61E7),
                         width: 290.w,
                         height: 50.h,
                         child: Center(
                           child: Text(
-                            'Log In',
+                            'Register',
                             style: GoogleFonts.inter(
                               fontSize: 14.sp,
                               letterSpacing: -0.01,
@@ -163,37 +211,7 @@ class LoginMobileLayout extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: TSizes.lg),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Don’t have an account?',
-                            style: TextStyle(
-                              color: const Color(0xff6C7278),
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(width: TSizes.sm),
-                          GestureDetector(
-                            onTap: (){
-                              Get.to(
-                                  const RegisterMobileLayout(),
-                                transition: Transition.fadeIn
 
-                              );
-                            },
-                            child: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                color: const Color(0xff4D81E7),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 )

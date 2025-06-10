@@ -1,30 +1,107 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
+import 'package:trident/data/models/trip_model.dart';
 import 'package:trident/features/dashboard/widgets/mobile/dashboard_mobile_layout.dart';
-
+import 'package:trident/features/trips/controllers/trip_controller.dart';
+import 'package:trident/routes/routes.dart';
+import 'package:trident/utils/constants/colors.dart';
+import 'package:trident/utils/device/device_utility.dart';
 import '../../../common/widgets/containers/rounded_container.dart';
-import '../../../utils/constants/colors.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class PageControls extends StatelessWidget {
-  final DashBoardController dashBoardController;
+  final TripController tripController;
   final GlobalKey<FormState> formKey;
-  const PageControls({super.key, required this.dashBoardController, required this.formKey});
+  final SideBarController sideBarController;
+
+  const PageControls({
+    super.key,
+    required this.tripController,
+    required this.formKey,
+    required this.sideBarController,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = TDeviceUtils.isDesktopScreen(context);
+    final isSecondPage = tripController.pageIndex.value == 1;
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment:
+          isDesktop ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
       children: [
+        /// Left Button: Cancel / Previous (Mobile only or step 1 on mobile)
+        if (!isDesktop)
+          TRoundedContainer(
+            showBorder: true,
+            onTap: () {
+              tripController.pageIndex.value > 0
+                  ? tripController
+                      .changePage(tripController.pageIndex.value - 1)
+                  : Get.back();
+            },
+            borderColor: TColors.grey.withOpacity(0.6),
+            width: 124.w,
+            height: 40.h,
+            radius: 8.r,
+            child: Center(
+              child: Text(
+                style: TextStyle(
+                  decoration: TextDecoration.none,
+                  color: TColors.black,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+                tripController.pageIndex.value == 1 ? 'Previous' : 'Cancel',
+              ),
+            ),
+          ),
+
+        /// Right Button: Next / Save
         TRoundedContainer(
+          backgroundColor: TColors.bgPrimary,
           showBorder: true,
           onTap: () {
-            dashBoardController.pageIndex.value > 0
-                ? dashBoardController
-                    .changePage(dashBoardController.pageIndex.value - 1)
-                : Get.back();
+            if (isSecondPage) {
+              // Validate before saving
+              if (formKey.currentState!.validate()) {
+                if (isDesktop) {
+                  print('CREATING TRIP....');
+
+                  print('Selected billedTo - ${tripController.selectedBilledTo.value}');
+                  print('Selected billedVechile - ${tripController.selectedBilledTo.value}');
+                  print('Selected driverName - ${tripController.selectedDriver.value}');
+                  print('Selected source - ${tripController.selectedSource.value}');
+                  print('Selected destination - ${tripController.selectedDestination.value}');
+                  print('Selected tripDate - ${tripController.selectedTripDate.value}');
+                  tripController.createTrip(TripModel(
+                      billedTo: tripController.selectedBilledTo.value,
+                      billedVehicle: tripController.selectedBilledVehicle.value,
+                      driverName: tripController.selectedDriver.value,
+                      source: tripController.selectedSource.value,
+                      destination: tripController.selectedDestination.value,
+                      tripDate: DateTime.parse(
+                          tripController.selectedTripDate.value), tripType: tripController.tripType.value));
+                  sideBarController.menuOnTap(TRoutes.dashBoardScreen);
+                  tripController.changePage(tripController.pageIndex.value = 0);
+                } else {
+                  tripController.createTrip(TripModel(
+                      billedTo: tripController.selectedBilledTo.value,
+                      billedVehicle: tripController.selectedBilledVehicle.value,
+                      driverName: tripController.selectedDriver.value,
+                      source: tripController.selectedSource.value,
+                      destination: tripController.selectedDestination.value,
+                      tripDate: DateTime.parse(
+                          tripController.selectedTripDate.value), tripType: tripController.tripType.value));
+                  Get.to(() => const DashboardMobileLayout());
+                }
+              }
+            } else {
+              // Move to next page
+              tripController.changePage(tripController.pageIndex.value + 1);
+            }
           },
           borderColor: TColors.grey.withOpacity(0.6),
           width: 124.w,
@@ -38,38 +115,7 @@ class PageControls extends StatelessWidget {
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
               ),
-              dashBoardController.pageIndex.value == 1  ? 'Previous' : 'Cancel',
-            ),
-          ),
-        ),
-        TRoundedContainer(
-          backgroundColor: TColors.bgPrimary,
-          showBorder: true,
-          onTap: () {
-
-            if(dashBoardController.pageIndex.value == 1 && dashBoardController.tripFormKey.currentState!.validate()) {
-              // dashBoardController.createTrip();
-              Get.to(() => const DashboardMobileLayout());
-            }
-            dashBoardController
-                .changePage(dashBoardController.pageIndex.value + 1);
-
-            // Trigger Trip Creation Logic
-          },
-          borderColor: TColors.grey.withOpacity(0.6),
-          width: 124.w,
-          height: 40.h,
-          radius: 8.r,
-          child: Center(
-            child: Text(
-              style: TextStyle(
-                decoration: TextDecoration.none,
-                color: TColors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-              ),
-              dashBoardController.pageIndex.value == 1  ? 'Save' : 'Next',
-
+              isSecondPage ? 'Save' : 'Next',
             ),
           ),
         ),

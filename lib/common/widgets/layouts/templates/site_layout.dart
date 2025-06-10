@@ -31,9 +31,8 @@ class TSiteTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: TResponsiveWidget(
-        desktop: useLayout
-            ? DesktopLayout(body: desktop)
-            : desktop ?? Container(),
+        desktop:
+            useLayout ? DesktopLayout(body: desktop) : desktop ?? Container(),
         tablet: useLayout
             ? TabletLayout(body: tablet ?? desktop)
             : tablet ?? desktop ?? Container(),

@@ -1,21 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:trident/routes/routes.dart';
 
 class DashBoardController extends GetxController {
 
-  // Trip Creation Form Variables
-  var selectedTripDate = ''.obs;
-  var selectedBilledTo = ''.obs;
-  var selectedBusinessVertical = ''.obs;
-  var selectedBilledVehicle = ''.obs;
-  var selectedDriver = ''.obs;
-  var selectedSourceDestination = ''.obs;
-  var selectedDestination = ''.obs;
-  var dieselPrice = 0.0.obs;
-  var totalTripChargesAllocated = 0.0.obs;
-  var estimatedDistance = 0.0.obs;
-  var tripFormKey = GlobalKey<FormState>();
-  var tripType = 'OS'.obs;
 
 
   // Trip Creation Controller Variables
@@ -24,21 +12,17 @@ class DashBoardController extends GetxController {
   var totalTripChargesAllocatedController = TextEditingController();
   var estimatedDistanceController = TextEditingController();
 
-  // Page Controller Variables
 
-  var pageController = PageController();
-  var pageIndex = 0.obs;
 
-  void updateTripDate(DateTime date) {
-    selectedTripDate.value = '${date.day}/${date.month}/${date.year}';
+  // switch body content for desktop
+
+  var currentScreen = 'dashboard'.obs;
+
+  void switchScreen(String screen) {
+    currentScreen.value = screen;
+    Get.offNamed(TRoutes.addTripsScreen);
   }
 
-  void changePage(int index) {
-    pageIndex.value = index;
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
+
+
 }

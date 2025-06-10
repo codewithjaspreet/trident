@@ -3,6 +3,8 @@ import 'package:trident/features/auth/views/login/login.dart';
 import 'package:trident/routes/routes.dart';
 
 import '../features/dashboard/views/dashboard.dart';
+import '../features/dashboard/widgets/mobile/dashboard_mobile_layout.dart';
+import '../features/trips/views/add_trip.dart';
 import '../main.dart';
 
 class TAppRoutes {
@@ -18,6 +20,11 @@ class TAppRoutes {
       name: TRoutes.loginScreen,
       page: () => const TLoginScreen(),
     ),
+    GetPage(
+      name: TRoutes.addTripsScreen,
+      page: () => const TAddTrip(),
+    ),
+
 
   ];
 }

@@ -12,8 +12,6 @@ import 'package:url_strategy/url_strategy.dart';
 import 'firebase_options.dart';
 
 void main() async {
-
-
   //  removing hash signature from the url
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -25,14 +23,12 @@ void main() async {
   runApp(const App());
 }
 
-
-class App extends StatelessWidget{
+class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return  ScreenUtilInit(
+    return ScreenUtilInit(
       designSize: const Size(375, 812), // iPhone X base size. Adjust if needed.
       minTextAdapt: true,
       splitScreenMode: true,
@@ -53,11 +49,5 @@ class App extends StatelessWidget{
         );
       },
     );
-
   }
-
-
-  }
-
-
-
+}

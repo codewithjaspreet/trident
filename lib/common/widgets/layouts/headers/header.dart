@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
 import 'package:trident/common/widgets/images/t_rounded_image.dart';
+import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/utils/constants/colors.dart';
 import 'package:trident/utils/constants/enums.dart';
 import 'package:trident/utils/constants/image_strings.dart';
@@ -15,6 +19,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = TDeviceUtils.isMobileScreen(context);
+    SideBarController sideBarController = Get.put(SideBarController());
 
     // ------------------- MOBILE APPBAR -------------------
     if (isMobile) {
@@ -79,64 +84,81 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Greeting Text
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Hello Robert 👋🏻',
-                  style: GoogleFonts.lexend(
-                    fontSize: 20,
-                    color: TColors.secondary,
-                    fontWeight: FontWeight.w600,
-                  )),
-              const SizedBox(height: 4),
-              Text('Good Morning',
-                  style: GoogleFonts.lexend(
-                    fontSize: 14,
-                    color: TColors.primary,
-                    fontWeight: FontWeight.w300,
-                  )),
-            ],
+          Obx(
+                () => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (sideBarController.activeItem.value == '/dashboard') ...[
+                  Text(
+                    'Hello Robert 👋🏻',
+                    style: GoogleFonts.lexend(
+                      fontSize: 20,
+                      color: TColors.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Good Morning',
+                    style: GoogleFonts.lexend(
+                      fontSize: 14,
+                      color: TColors.primary,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ] else ...[
+                  Text(
+                    'Add New Trip',
+                    style: GoogleFonts.lexend(
+                      fontSize: 20,
+                      color: TColors.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
 
           const Spacer(),
 
           // Search Box
-          SizedBox(
-            width: 300,
-            child: TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Search',
-                prefixIcon: const Icon(Icons.search),
-                hintStyle: GoogleFonts.lexend(
-                  fontSize: 14,
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w300,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: TColors.primary),
-                ),
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: 300,
+          //   child: TextFormField(
+          //     decoration: InputDecoration(
+          //       hintText: 'Search',
+          //       prefixIcon: const Icon(Icons.search),
+          //       hintStyle: GoogleFonts.lexend(
+          //         fontSize: 14,
+          //         color: Colors.black54,
+          //         fontWeight: FontWeight.w300,
+          //       ),
+          //       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(10),
+          //       ),
+          //       focusedBorder: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(10),
+          //         borderSide: const BorderSide(color: TColors.primary),
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
-          const SizedBox(width: TSizes.lg),
-
-          // Notification Icon
-          TRoundedImage(
-            width: 50,
-            height: 50,
-            borderRadius: 10,
-            backgroundColor: TColors.primary.withOpacity(0.10),
-            imageType: ImageType.asset,
-            image: TImages.notification,
-            fit: BoxFit.contain,
-          ),
+          // const SizedBox(width: TSizes.lg),
+          //
+          // // Notification Icon
+          // TRoundedImage(
+          //   width: 50,
+          //   height: 50,
+          //   borderRadius: 10,
+          //   backgroundColor: TColors.primary.withOpacity(0.10),
+          //   imageType: ImageType.asset,
+          //   image: TImages.notification,
+          //   fit: BoxFit.contain,
+          // ),
 
           const SizedBox(width: TSizes.lg),
 
@@ -150,15 +172,15 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const TRoundedImage(
-                  image:
-                      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.1.0',
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.fitHeight,
-                  borderRadius: TSizes.md,
-                  imageType: ImageType.network,
-                ),
+                // const TRoundedImage(
+                //   image:
+                //       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.1.0',
+                //   width: 40,
+                //   height: 40,
+                //   fit: BoxFit.fitHeight,
+                //   borderRadius: TSizes.md,
+                //   imageType: ImageType.network,
+                // ),
                 const SizedBox(width: 8),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
