@@ -9,6 +9,7 @@ class TripModel {
   DateTime tripDate;
   String tripType;
   String status;
+  String createdBy;
 
   TripModel({
     required this.billedTo,
@@ -18,8 +19,23 @@ class TripModel {
     required this.destination,
     required this.tripDate,
     required this.tripType,
+    required this.createdBy,
     this.status = 'pending',
   });
+
+  factory TripModel.fromJson(Map<String, dynamic> json) {
+    return TripModel(
+      billedTo: json['billedTo'] ?? '',
+      billedVehicle: json['billedVehicle'] ?? '',
+      destination: json['destination'] ?? '',
+      driverName: json['driverName'] ?? '',
+      source: json['source'] ?? '',
+      status: json['status'] ?? '',
+      tripDate: (json['tripDate'] as Timestamp).toDate(),
+      tripType: json['tripType'] ?? '',
+      createdBy: json['createdBy'] ?? ''
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,7 +46,8 @@ class TripModel {
       'destination': destination,
       'tripDate': Timestamp.fromDate(tripDate),
       'status': status,
-      'tripType' : tripType
+      'tripType' : tripType,
+      'createdBy' : createdBy
     };
   }
 }

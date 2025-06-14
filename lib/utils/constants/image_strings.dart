@@ -9,6 +9,7 @@ class TImages {
   static const String notification = "assets/icons/notification.png";
   static const String dashboard = "assets/icons/dashboard.svg";
   static const String createdTrips = "assets/icons/created_trips.svg";
+  static const String logout = "assets/icons/logout.svg";
   static const String completedTrips = "assets/icons/completed_trips.svg";
   static const String addTrips = "assets/icons/add_trips.svg";
   static const String activeTrips = "assets/icons/active_trips.svg";

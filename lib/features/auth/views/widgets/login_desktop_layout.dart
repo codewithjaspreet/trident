@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
+import 'package:trident/features/dashboard/views/dashboard.dart';
 import 'package:trident/utils/constants/image_strings.dart';
 import 'package:trident/utils/constants/sizes.dart';
 import '../../../../common/widgets/textfeilds/custom_textfeild.dart';
+import '../../../../data/models/driver_model.dart';
+import '../../controllers/auth_controller.dart';
 
 class LoginDesktopLayout extends StatelessWidget {
-  const LoginDesktopLayout({super.key});
+   LoginDesktopLayout({super.key});
+   final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,7 @@ class LoginDesktopLayout extends StatelessWidget {
                 ),
                 TCustomInputField(
                   hintText: '+91 798521XXXX',
+                  controller: authController.phoneController,
                   validator: (value) =>
                       value == null || value.isEmpty ? 'Required' : null,
                   keyboardType: TextInputType.emailAddress,
@@ -59,7 +66,12 @@ class LoginDesktopLayout extends StatelessWidget {
                 const SizedBox(height: TSizes.lg),
                 TRoundedContainer(
                   margin: const EdgeInsets.only(top: TSizes.lg * 2),
-                  onTap: () {},
+
+                    onTap: () async {
+                      authController.sendOtp(context);
+
+
+                    },
                   backgroundColor: const Color(0xff1D61E7),
                   width: 600,
                   radius: 4,

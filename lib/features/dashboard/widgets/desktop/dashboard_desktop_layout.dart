@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
+import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:trident/features/dashboard/widgets/desktop/dashboard_card.dart';
 import 'package:trident/features/trips/widgets/add_trip_desktop.dart';
 import 'package:trident/utils/constants/image_strings.dart';
@@ -11,6 +12,7 @@ class DashboardDesktopLayout extends StatelessWidget {
   DashboardDesktopLayout({super.key});
 
   final SideBarController sideBarController = Get.put(SideBarController());
+  final DashBoardController dashBoardController = Get.put(DashBoardController());
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +28,30 @@ class DashboardDesktopLayout extends StatelessWidget {
             /// TOP BAR with cards
             Obx(() {
               if (sideBarController.activeItem.value == '/dashboard') {
-                return const Row(
+                return  Row(
                   children: [
                     DashboardCard(
                       title: 'Completed Trips',
                       iconImage: TImages.completedTrips,
-                      value: 500,
+                      value: dashBoardController.allCreatedTrips.length,
                       percentage: '10%',
-                      updateDate: 'July 16, 2023',
+                      updateDate: DateTime.now().toString(),
                     ),
-                    SizedBox(width: TSizes.md),
+                    const SizedBox(width: TSizes.md),
                     DashboardCard(
                       title: 'Active Trips',
                       iconImage: TImages.activeTrips,
-                      value: 200,
+                      value: dashBoardController.allCreatedTrips.length,
                       percentage: '3%',
-                      updateDate: 'May 21, 2023',
+                      updateDate: DateTime.now().toString(),
                     ),
-                    SizedBox(width: TSizes.md),
+                    const SizedBox(width: TSizes.md),
                     DashboardCard(
                       title: 'Created Trips',
                       iconImage: TImages.createdTrips,
-                      value: 100,
+                      value: dashBoardController.allCreatedTrips.length,
                       percentage: '11%',
-                      updateDate: 'Aug 16, 2023',
+                      updateDate: DateTime.now().toString(),
                     ),
                   ],
                 );
@@ -65,10 +67,10 @@ class DashboardDesktopLayout extends StatelessWidget {
               child: Obx(() {
                 switch (sideBarController.activeItem.value) {
                   case '/addTrips':
-                    return  AddTripDesktop();
+                    return  const AddTripDesktop();
                   case '/dashboard':
                   default:
-                    return const DashboardDataTable();
+                    return  DashboardDataTable();
                 }
               }),
             ),

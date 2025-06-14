@@ -8,7 +8,7 @@ class TLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const TSiteTemplate(
+    return  TSiteTemplate(
       useLayout: false,
       desktop: LoginDesktopLayout(),
       mobile: LoginMobileLayout(),

@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/data/models/trip_model.dart';
+import 'package:trident/data/repositories/local_repository.dart';
+import 'package:trident/features/dashboard/views/dashboard.dart';
 import 'package:trident/features/dashboard/widgets/mobile/dashboard_mobile_layout.dart';
 import 'package:trident/features/trips/controllers/trip_controller.dart';
 import 'package:trident/routes/routes.dart';
@@ -13,13 +16,11 @@ import '../../dashboard/controllers/dashboard_controller.dart';
 
 class PageControls extends StatelessWidget {
   final TripController tripController;
-  final GlobalKey<FormState> formKey;
   final SideBarController sideBarController;
 
   const PageControls({
     super.key,
     required this.tripController,
-    required this.formKey,
     required this.sideBarController,
   });
 
@@ -27,7 +28,7 @@ class PageControls extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDesktop = TDeviceUtils.isDesktopScreen(context);
     final isSecondPage = tripController.pageIndex.value == 1;
-
+    final loggedInUser = UserLocalDataSource().getUserMobileNo();
     return Row(
       mainAxisAlignment:
           isDesktop ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
@@ -65,38 +66,44 @@ class PageControls extends StatelessWidget {
           showBorder: true,
           onTap: () {
             if (isSecondPage) {
-              // Validate before saving
-              if (formKey.currentState!.validate()) {
-                if (isDesktop) {
-                  print('CREATING TRIP....');
+              final hasAllFields = tripController.selectedTripDate.isNotEmpty &&
+                  tripController.selectedBilledTo.value.isNotEmpty &&
+                  tripController.selectedBilledVehicle.value.isNotEmpty &&
+                  tripController.selectedDriver.value.isNotEmpty &&
+                  tripController.selectedSource.value.isNotEmpty &&
+                  tripController.selectedDestination.value.isNotEmpty &&
+                  tripController.tripType.value.isNotEmpty;
 
-                  print('Selected billedTo - ${tripController.selectedBilledTo.value}');
-                  print('Selected billedVechile - ${tripController.selectedBilledTo.value}');
-                  print('Selected driverName - ${tripController.selectedDriver.value}');
-                  print('Selected source - ${tripController.selectedSource.value}');
-                  print('Selected destination - ${tripController.selectedDestination.value}');
-                  print('Selected tripDate - ${tripController.selectedTripDate.value}');
-                  tripController.createTrip(TripModel(
-                      billedTo: tripController.selectedBilledTo.value,
-                      billedVehicle: tripController.selectedBilledVehicle.value,
-                      driverName: tripController.selectedDriver.value,
-                      source: tripController.selectedSource.value,
-                      destination: tripController.selectedDestination.value,
-                      tripDate: DateTime.parse(
-                          tripController.selectedTripDate.value), tripType: tripController.tripType.value));
+              if (hasAllFields) {
+                final trip = TripModel(
+                    billedTo: tripController.selectedBilledTo.value,
+                    billedVehicle: tripController.selectedBilledVehicle.value,
+                    driverName: tripController.selectedDriver.value,
+                    source: tripController.selectedSource.value,
+                    destination: tripController.selectedDestination.value,
+                    status: 'Open',
+                    tripDate:
+                        DateTime.parse(tripController.selectedTripDate.value)
+                            .toLocal(),
+                    tripType: tripController.tripType.value,
+                    createdBy: loggedInUser.toString());
+
+                if (isDesktop) {
+                  tripController.createTrip(trip);
                   sideBarController.menuOnTap(TRoutes.dashBoardScreen);
-                  tripController.changePage(tripController.pageIndex.value = 0);
+                  tripController.changePage(0);
                 } else {
-                  tripController.createTrip(TripModel(
-                      billedTo: tripController.selectedBilledTo.value,
-                      billedVehicle: tripController.selectedBilledVehicle.value,
-                      driverName: tripController.selectedDriver.value,
-                      source: tripController.selectedSource.value,
-                      destination: tripController.selectedDestination.value,
-                      tripDate: DateTime.parse(
-                          tripController.selectedTripDate.value), tripType: tripController.tripType.value));
-                  Get.to(() => const DashboardMobileLayout());
+                  tripController.createTrip(trip);
+                  Get.to(() => const DashboardScreen());
                 }
+              } else {
+                Get.snackbar(
+                  'Missing Information',
+                  'Please fill all required fields before saving.',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red.shade100,
+                  colorText: Colors.black,
+                );
               }
             } else {
               // Move to next page

@@ -112,7 +112,7 @@ class RegisterMobileLayout extends StatelessWidget {
                           const SizedBox(width: TSizes.sm),
                           GestureDetector(
                             onTap: (){
-                              Get.to(const LoginMobileLayout()
+                              Get.to( LoginMobileLayout()
                               , transition: Transition.rightToLeft
                               );
                             },

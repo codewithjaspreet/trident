@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
 import 'package:trident/common/widgets/images/t_rounded_image.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
+import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/colors.dart';
 import 'package:trident/utils/constants/enums.dart';
 import 'package:trident/utils/constants/image_strings.dart';
@@ -42,6 +43,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Logo
@@ -50,24 +52,30 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
                   TImages.appLogo,
                   height: 70,
                 ),
-                const SizedBox(width: TSizes.lg),
-                const Icon(Icons.search,
-                    size: TSizes.md * 2, color: TColors.secondary),
-                const SizedBox(width: TSizes.lg),
-                const Icon(Iconsax.notification,
-                    size: TSizes.md * 2, color: TColors.secondary),
-                const SizedBox(width: TSizes.md * 2),
-                InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.1.0',
-                      height: 32,
-                      width: 32,
-                      fit: BoxFit.cover,
+                // const SizedBox(width: TSizes.lg),
+                // const Icon(Icons.search,
+                //     size: TSizes.md * 2, color: TColors.secondary),
+                // const SizedBox(width: TSizes.lg),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Get.offNamed(TRoutes.loginScreen),
+                        child: const Icon(Iconsax.logout)),
+                    //     size: TSizes.md * 2, color: TColors.secondary),
+                    const SizedBox(width: TSizes.md ),
+                    InkWell(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: ClipOval(
+                        child: Image.network(
+                          'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.1.0',
+                          height: 32,
+                          width: 32,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  ],
+                )
               ],
             ),
           ),
@@ -162,6 +170,9 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
 
           const SizedBox(width: TSizes.lg),
 
+          GestureDetector(
+              onTap: () => Get.offAll(TRoutes.loginScreen),
+              child: const Icon(Iconsax.logout)),
           // Profile Card
           TRoundedContainer(
             width: 184,
@@ -172,6 +183,8 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+
+
                 // const TRoundedImage(
                 //   image:
                 //       'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.1.0',

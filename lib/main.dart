@@ -8,6 +8,8 @@ import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/text_strings.dart';
 import 'package:trident/utils/theme/theme.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 import 'firebase_options.dart';
 
@@ -18,6 +20,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await initializeDateFormatting('en_IN', null);
 
   setPathUrlStrategy();
   runApp(const App());

@@ -7,18 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/features/trips/controllers/trip_controller.dart';
 import '../../../../common/widgets/dropdowns/custom_dropdown.dart';
-import '../../../../common/widgets/textfeilds/custom_textfeild.dart';
 import '../../../../common/widgets/texts/section_heading.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
-import '../../../dashboard/controllers/dashboard_controller.dart';
 import '../page_controls.dart';
 
 class TripCreationFormB extends StatelessWidget {
-  const TripCreationFormB({super.key, required this.tripController, required this.sideBarController});
+   TripCreationFormB({super.key, required this.tripController, required this.sideBarController});
 
   final TripController tripController;
   final SideBarController sideBarController;
+  final GlobalKey<FormState> tripFormKey = GlobalKey<FormState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class TripCreationFormB extends StatelessWidget {
         child: SingleChildScrollView(
           reverse: true,
           child: Form(
-            key: tripController.tripFormKey,
+            key: tripFormKey,
             child: Column(
               children: [
                 TSectionHeading(
@@ -49,12 +49,7 @@ class TripCreationFormB extends StatelessWidget {
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
                 TDropDown(
-                  items: const [
-                    'UP32NM3672',
-                    'UP32NM3673',
-                    'UP32NM3674',
-                    'UP32NM3675',
-                  ],
+                  items: tripController.allSources,
                   hintText: 'Select Source',
                   onChanged: (String? val) {
                     tripController.selectedSource.value = val!;
@@ -63,12 +58,7 @@ class TripCreationFormB extends StatelessWidget {
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
                 TDropDown(
-                  items: const [
-                    'UP32NM3672',
-                    'UP32NM3673',
-                    'UP32NM3674',
-                    'UP32NM3675',
-                  ],
+                  items: tripController.allDestination,
                   hintText: 'Select Destination',
                   onChanged: (String? val) {
                     tripController.selectedDestination.value = val!;
@@ -135,7 +125,6 @@ class TripCreationFormB extends StatelessWidget {
 
                 PageControls(
                   tripController: tripController,
-                  formKey: tripController.tripFormKey,
                   sideBarController: sideBarController,
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),

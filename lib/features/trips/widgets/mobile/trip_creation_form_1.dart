@@ -17,14 +17,15 @@ import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/device/device_utility.dart';
-import '../../../dashboard/controllers/dashboard_controller.dart';
 import '../page_controls.dart';
 
 class TripCreationFormA extends StatelessWidget {
-  const TripCreationFormA({super.key, required this.tripController, required this.sideBarController});
+   TripCreationFormA({super.key, required this.tripController, required this.sideBarController});
 
   final TripController tripController;
   final SideBarController sideBarController;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,6 @@ class TripCreationFormA extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         child: Form(
-          key: tripController.tripFormKey,
           child: Column(
             children: [
               TSectionHeading(
@@ -116,12 +116,7 @@ class TripCreationFormA extends StatelessWidget {
                   const SizedBox(width: TSizes.spaceBtwInputFields),
                   Expanded(
                     child: TDropDown(
-                      items: const [
-                        'Mahindra',
-                        'Tata',
-                        'Marti Suzuki',
-                        'Hyundai',
-                      ],
+                      items: tripController.allVehicles,
                       hintText: 'Billed Vehicle',
                       onChanged: (String? val) {
                         tripController.selectedBilledVehicle.value = val!;
@@ -135,12 +130,7 @@ class TripCreationFormA extends StatelessWidget {
                   : Column(
                 children: [
                   TDropDown(
-                    items: const [
-                      'UP32NM3672',
-                      'UP32NM3672',
-                      'UP32NM3672',
-                      'UP32NM3672',
-                    ],
+                    items: tripController.allVehicles,
                     hintText: 'Billed Vehicle',
                     onChanged: (String? val) {
                       tripController.selectedBilledVehicle.value = val!;
@@ -153,19 +143,7 @@ class TripCreationFormA extends StatelessWidget {
 
               /// Driver Name (full width both layouts)
               TDropDown(
-                items: const [
-                  'MAHENDRA SINGH',
-                  'RAFAT ALI',
-                  'MOHAMMAD ARIF',
-                  'PRASHANT KUMAR',
-                  'RAHUL MISHRA',
-                  'KAMLENDRA PRATAP',
-                  'MAHENDRA PRATAP',
-                  'RAVI PRASAD',
-                  'KAMLESH VERMA',
-                  'MADHUR KUMAR YADAV',
-                  'JITENDRA YADAV'
-                ],
+                items: tripController.allDrivers,
                 hintText: 'Driver Name',
                 onChanged: (String? val) {
                   tripController.selectedDriver.value = val!;
@@ -173,13 +151,12 @@ class TripCreationFormA extends StatelessWidget {
                 },
                 title: 'Driver Name',
               ),
-              const SizedBox(height: TSizes.spaceBtwSections),
+              const SizedBox(height: TSizes.spaceBtwSections ),
 
               /// Page Controls
               PageControls(
                 tripController: tripController,
                 sideBarController: sideBarController,
-                formKey: tripController.tripFormKey,
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
             ],

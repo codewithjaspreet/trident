@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,15 +6,17 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
-import 'package:trident/features/auth/views/widgets/register_mobile_layout.dart';
+import 'package:trident/features/dashboard/views/dashboard.dart';
 import 'package:trident/utils/constants/image_strings.dart';
 import 'package:trident/utils/constants/sizes.dart';
 import '../../../../common/widgets/textfeilds/custom_textfeild.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+import '../../controllers/auth_controller.dart';
 
 class LoginMobileLayout extends StatelessWidget {
-  const LoginMobileLayout({super.key});
+   LoginMobileLayout({super.key});
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +24,8 @@ class LoginMobileLayout extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+
+
           // Background Gradient
           const TRoundedContainer(
             width: double.infinity,
@@ -91,60 +96,66 @@ class LoginMobileLayout extends StatelessWidget {
                       const SizedBox(height: TSizes.lg),
                       TRoundedContainer(
                         child: TCustomInputField(
-                          hintText: 'Loisbecket@gmail.com',
+
+                          hintText: '+91 798521XXXX',
+                          controller: authController.phoneController,
                           validator: (value) => value == null || value.isEmpty
                               ? 'Required'
                               : null,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.done,
-                          title: 'Email',
+                          title: 'Phone No.',
                         ),
                       ),
-                      TRoundedContainer(
-                        child: TCustomInputField(
-                          hintText: '********',
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Required'
-                              : null,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.done,
-                          title: 'Password',
-                          obscureText: true,
-                        ),
-                      ),
-                      TRoundedContainer(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Checkbox(
-                                  value: false,
-                                  onChanged: null,
-                                ),
-                                Text(
-                                  'Remember me',
-                                  style: TextStyle(
-                                    color: const Color(0xff6C7278),
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              'Forget Password ?',
-                              style: TextStyle(
-                                color: const Color(0xff4D81E7),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // TRoundedContainer(
+                      //   child: TCustomInputField(
+                      //     hintText: '********',
+                      //     validator: (value) => value == null || value.isEmpty
+                      //         ? 'Required'
+                      //         : null,
+                      //     keyboardType: TextInputType.visiblePassword,
+                      //     textInputAction: TextInputAction.done,
+                      //     title: 'Password',
+                      //     obscureText: true,
+                      //   ),
+                      // ),
+                      // TRoundedContainer(
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Row(
+                      //         children: [
+                      //           const Checkbox(
+                      //             value: false,
+                      //             onChanged: null,
+                      //           ),
+                      //           Text(
+                      //             'Remember me',
+                      //             style: TextStyle(
+                      //               color: const Color(0xff6C7278),
+                      //               fontSize: 12.sp,
+                      //               fontWeight: FontWeight.w500,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       Text(
+                      //         'Forget Password ?',
+                      //         style: TextStyle(
+                      //           color: const Color(0xff4D81E7),
+                      //           fontSize: 12.sp,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       const SizedBox(height: TSizes.lg),
                       TRoundedContainer(
+                        onTap: () async {
+                          authController.sendOtp(context);
+                        },
+
                         margin:
                             const EdgeInsets.symmetric(horizontal: TSizes.md),
                         backgroundColor: const Color(0xff1D61E7),
@@ -163,37 +174,34 @@ class LoginMobileLayout extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: TSizes.lg),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Don’t have an account?',
-                            style: TextStyle(
-                              color: const Color(0xff6C7278),
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(width: TSizes.sm),
-                          GestureDetector(
-                            onTap: (){
-                              Get.to(
-                                  const RegisterMobileLayout(),
-                                transition: Transition.fadeIn
-
-                              );
-                            },
-                            child: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                color: const Color(0xff4D81E7),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Text(
+                      //       'Don’t have an account?',
+                      //       style: TextStyle(
+                      //         color: const Color(0xff6C7278),
+                      //         fontSize: 12.sp,
+                      //         fontWeight: FontWeight.w400,
+                      //       ),
+                      //     ),
+                      //     const SizedBox(width: TSizes.sm),
+                      //     GestureDetector(
+                      //       onTap: () {
+                      //         Get.to(const RegisterMobileLayout(),
+                      //             transition: Transition.fadeIn);
+                      //       },
+                      //       child: Text(
+                      //         'Sign Up',
+                      //         style: TextStyle(
+                      //           color: const Color(0xff4D81E7),
+                      //           fontSize: 12.sp,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 )
