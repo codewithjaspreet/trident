@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,13 +14,12 @@ class TripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormatted = DateFormat('dd MMM yyyy').format(trip.tripDate);
+    final dateFormatted =
+        DateFormat('d MMMM y \'at\' h:mm a').format(trip.createdAt!);
 
     return TRoundedContainer(
-      margin: EdgeInsets.symmetric(
-          horizontal: TSizes.md.w,
-          vertical: TSizes.sm.h
-      ),
+      margin:
+          EdgeInsets.symmetric(horizontal: TSizes.md.w, vertical: TSizes.sm.h),
       padding: EdgeInsets.all(TSizes.md.w),
       backgroundColor: Colors.white,
       showBorder: true,
@@ -42,11 +39,11 @@ class TripCard extends StatelessWidget {
                     Text(
                       trip.billedTo,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF0F172A),
-                        fontSize: 16.sp,
-                        letterSpacing: -0.2,
-                      ),
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF0F172A),
+                            fontSize: 16.sp,
+                            letterSpacing: -0.2,
+                          ),
                     ),
                     // SizedBox(height: 2.h),
                     // Text(
@@ -112,10 +109,7 @@ class TripCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: 12.w,
-          vertical: 6.h
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: badgeColor,
         borderRadius: BorderRadius.circular(20.r),
@@ -255,7 +249,7 @@ class TripCard extends StatelessWidget {
             Expanded(
               child: _buildDetailItem(
                 icon: Icons.calendar_today_outlined,
-                label: 'Date',
+                label: 'Date & Time',
                 value: dateFormatted,
                 iconColor: const Color(0xFFEF4444),
               ),
@@ -324,7 +318,7 @@ class TripCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: const Color(0xFF0F172A),
             ),
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -414,4 +408,3 @@ class TripCard extends StatelessWidget {
     }
   }
 }
-

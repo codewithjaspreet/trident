@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/data/models/trip_model.dart';
 import 'package:trident/data/repositories/local_repository.dart';
@@ -28,7 +29,6 @@ class PageControls extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDesktop = TDeviceUtils.isDesktopScreen(context);
     final isSecondPage = tripController.pageIndex.value == 1;
-    final loggedInUser = UserLocalDataSource().getUserMobileNo();
     return Row(
       mainAxisAlignment:
           isDesktop ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
@@ -64,7 +64,13 @@ class PageControls extends StatelessWidget {
         TRoundedContainer(
           backgroundColor: TColors.bgPrimary,
           showBorder: true,
-          onTap: () {
+          onTap: ()  async{
+
+            final userMobileNo = await GetStorage().read(
+              'user_mobile_no'
+            );
+
+
             if (isSecondPage) {
               final hasAllFields = tripController.selectedTripDate.isNotEmpty &&
                   tripController.selectedBilledTo.value.isNotEmpty &&
@@ -74,19 +80,23 @@ class PageControls extends StatelessWidget {
                   tripController.selectedDestination.value.isNotEmpty &&
                   tripController.tripType.value.isNotEmpty;
 
+
+
               if (hasAllFields) {
+
+
                 final trip = TripModel(
-                    billedTo: tripController.selectedBilledTo.value,
-                    billedVehicle: tripController.selectedBilledVehicle.value,
-                    driverName: tripController.selectedDriver.value,
-                    source: tripController.selectedSource.value,
-                    destination: tripController.selectedDestination.value,
-                    status: 'Open',
-                    tripDate:
-                        DateTime.parse(tripController.selectedTripDate.value)
-                            .toLocal(),
-                    tripType: tripController.tripType.value,
-                    createdBy: loggedInUser.toString());
+                  billedTo: tripController.selectedBilledTo.value,
+                  billedVehicle: tripController.selectedBilledVehicle.value,
+                  driverName: tripController.selectedDriver.value,
+                  source: tripController.selectedSource.value,
+                  destination: tripController.selectedDestination.value,
+                  status: 'Open',
+                  tripDate: DateTime.parse(tripController.selectedTripDate.value).toLocal(),
+                  tripType: tripController.tripType.value,
+                  createdBy: userMobileNo.toString()
+                );
+
 
                 if (isDesktop) {
                   tripController.createTrip(trip);
@@ -112,6 +122,7 @@ class PageControls extends StatelessWidget {
           },
           borderColor: TColors.grey.withOpacity(0.6),
           width: 124.w,
+
           height: 40.h,
           radius: 8.r,
           child: Center(

@@ -11,6 +11,9 @@ class TripModel {
   String status;
   String createdBy;
 
+  // Optional field, not part of constructor
+  DateTime? createdAt;
+
   TripModel({
     required this.billedTo,
     required this.billedVehicle,
@@ -27,14 +30,14 @@ class TripModel {
     return TripModel(
       billedTo: json['billedTo'] ?? '',
       billedVehicle: json['billedVehicle'] ?? '',
-      destination: json['destination'] ?? '',
       driverName: json['driverName'] ?? '',
       source: json['source'] ?? '',
-      status: json['status'] ?? '',
+      destination: json['destination'] ?? '',
       tripDate: (json['tripDate'] as Timestamp).toDate(),
       tripType: json['tripType'] ?? '',
-      createdBy: json['createdBy'] ?? ''
-    );
+      status: json['status'] ?? '',
+      createdBy: json['createdBy'] ?? '',
+    )..createdAt = (json['createdAt'] as Timestamp?)?.toDate(); // set after constructor
   }
 
   Map<String, dynamic> toMap() {
@@ -45,9 +48,10 @@ class TripModel {
       'source': source,
       'destination': destination,
       'tripDate': Timestamp.fromDate(tripDate),
+      'tripType': tripType,
       'status': status,
-      'tripType' : tripType,
-      'createdBy' : createdBy
+      'createdBy': createdBy,
+      'createdAt': FieldValue.serverTimestamp(),
     };
   }
 }

@@ -3,11 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:trident/routes/routes.dart';
 import '../../../utils/device/device_utility.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GetStorage _storage = GetStorage();
 
   final phoneController = TextEditingController();
   final otpController = TextEditingController();
@@ -18,12 +21,34 @@ class AuthController extends GetxController {
 
   late RecaptchaVerifier _recaptchaVerifier;
 
+  @override
+  void onInit() {
+    super.onInit();
+    handleAppLaunch(); // Step 1: handle app entry point
+  }
+
+  void handleAppLaunch() {
+    final user = _auth.currentUser;
+    final storedRole = _storage.read('user_role');
+
+    Future.microtask(() {
+      if (user != null && storedRole != null) {
+        debugPrint('[Auth] Redirecting to dashboard');
+        Get.toNamed(TRoutes.dashBoardScreen);
+      } else {
+        debugPrint('[Auth] Redirecting to login');
+        Get.toNamed(TRoutes.loginScreen);
+      }
+    });
+  }
+
+
   void _setupRecaptcha() {
     _recaptchaVerifier = RecaptchaVerifier(
       auth: FirebaseAuthPlatform.instance,
-      onSuccess: () => print('reCAPTCHA completed!'),
-      onError: (e) => print('reCAPTCHA error: ${e.message}'),
-      onExpired: () => print('reCAPTCHA expired'),
+      onSuccess: () => debugPrint('reCAPTCHA completed!'),
+      onError: (e) => debugPrint('reCAPTCHA error: ${e.message}'),
+      onExpired: () => debugPrint('reCAPTCHA expired'),
     );
   }
 
@@ -44,21 +69,23 @@ class AuthController extends GetxController {
           _recaptchaVerifier,
         );
         desktopConfirmationResult.value = confirmation;
-        Get.toNamed('/otp');
+        debugPrint('[Navigation] Redirecting to OTP Screen (desktop)');
+        Get.toNamed(TRoutes.otpScreen);
       } else {
         await _auth.verifyPhoneNumber(
           phoneNumber: phoneNumber,
           timeout: const Duration(seconds: 60),
           verificationCompleted: (credential) async {
             await _auth.signInWithCredential(credential);
-            await checkAndRedirectBasedOnRole();
+            await _handleUserPostVerification();
           },
           verificationFailed: (e) {
             Get.snackbar('Error', e.message ?? 'Verification failed');
           },
           codeSent: (verId, _) {
             verificationId.value = verId;
-            Get.toNamed('/otp');
+            debugPrint('[Navigation] Redirecting to OTP Screen (mobile)');
+            Get.toNamed(TRoutes.otpScreen);
           },
           codeAutoRetrievalTimeout: (verId) {
             verificationId.value = verId;
@@ -67,6 +94,7 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to send OTP: $e');
+      debugPrint('[Error] Failed to send OTP: $e');
     } finally {
       isLoading.value = false;
     }
@@ -95,38 +123,62 @@ class AuthController extends GetxController {
       }
 
       if (userCredential.user != null) {
-        await checkAndRedirectBasedOnRole();
+        await _handleUserPostVerification();
       } else {
         Get.snackbar('Error', 'Verification failed. Please try again.');
+        debugPrint('[Error] userCredential.user is null');
       }
     } catch (e) {
       Get.snackbar('Error', 'Invalid OTP or verification failed');
+      debugPrint('[Error] OTP verification failed: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> checkAndRedirectBasedOnRole() async {
+  Future<void> _handleUserPostVerification() async {
     final user = _auth.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      debugPrint('[Error] No user found after verification');
+      return;
+    }
 
     final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
     if (userDoc.exists) {
       final role = userDoc['role'];
-      if (role == 'admin') {
-        Get.offAllNamed('/dashboard');
-      } else {
-        Get.offAllNamed('/dashboard');
-      }
+      await _storage.write('user_role', role);
     } else {
-      // If first login, create with default role = driver
+      // First time user - default to driver
       await _firestore.collection('users').doc(user.uid).set({
         'mobile': user.phoneNumber,
         'role': 'driver',
         'createdAt': FieldValue.serverTimestamp(),
       });
-      Get.offAllNamed('/dashboard');
+      await _storage.write('user_role', 'driver');
+      await _storage.write('user_mobile_no', user.phoneNumber);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('[Navigation] Redirecting to Dashboard from _handleUserPostVerification');
+      Get.toNamed(TRoutes.dashBoardScreen);
+    });
+  }
+
+  Future<void> logout() async {
+    try {
+      await _auth.signOut();            // Firebase sign out
+      await _storage.erase();           // Clear local storage
+      phoneController.clear();
+      otpController.clear();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint('[Navigation] Redirecting to Login Screen from logout');
+        Get.toNamed(TRoutes.loginScreen);
+      });
+    } catch (e) {
+      Get.snackbar('Logout Failed', '$e.');
+      debugPrint('[Error] Logout Failed: $e');
     }
   }
 }

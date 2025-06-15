@@ -11,6 +11,8 @@ class TRoutes{
   static const String appSettingsScreen = '/appSettings';
   static const String loginScreen = '/loginScreen';
   static const String registerScreen = '/registerScreen';
+  static const String otpScreen = '/otp';
+  static const String splashScreen = '/splash';
 
 
   static List sideBarMenuItems = [

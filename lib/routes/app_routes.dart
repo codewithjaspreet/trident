@@ -3,6 +3,7 @@ import 'package:trident/features/auth/views/login/login.dart';
 import 'package:trident/routes/routes.dart';
 
 import '../features/auth/views/login/otp.dart';
+import '../features/auth/views/splashscreen.dart';
 import '../features/dashboard/views/dashboard.dart';
 import '../features/trips/views/add_trip.dart';
 import '../main.dart';
@@ -25,7 +26,16 @@ class TAppRoutes {
       page: () => const TAddTrip(),
     ),
 
-    GetPage(name: '/otp', page: () => OtpScreen()),
+    GetPage(
+      name: TRoutes.otpScreen,
+      page: () =>  OtpScreen(),
+    ),
+
+    GetPage(
+      name: TRoutes.splashScreen,
+      page: () => const SplashScreen(),
+    ),
+
 
 
 

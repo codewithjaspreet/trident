@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
 import 'package:trident/common/widgets/images/t_rounded_image.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
+import 'package:trident/features/auth/controllers/auth_controller.dart';
 import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/colors.dart';
 import 'package:trident/utils/constants/enums.dart';
@@ -21,6 +22,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final isMobile = TDeviceUtils.isMobileScreen(context);
     SideBarController sideBarController = Get.put(SideBarController());
+    AuthController authController = Get.put(AuthController());
 
     // ------------------- MOBILE APPBAR -------------------
     if (isMobile) {
@@ -59,7 +61,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () => Get.offNamed(TRoutes.loginScreen),
+                      onTap: () => authController.logout(),
                         child: const Icon(Iconsax.logout)),
                     //     size: TSizes.md * 2, color: TColors.secondary),
                     const SizedBox(width: TSizes.md ),

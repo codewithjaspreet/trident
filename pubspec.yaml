@@ -31,6 +31,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   smooth_page_indicator: ^1.2.1
   shared_preferences: ^2.5.3
+  custom_refresh_indicator: ^4.0.1
 
   # Web Specific
   web: ^1.0.0

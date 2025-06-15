@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:trident/common/widgets/layouts/templates/site_layout.dart';
 import 'package:trident/routes/app_routes.dart';
 import 'package:trident/routes/routes.dart';
@@ -16,7 +17,7 @@ import 'firebase_options.dart';
 void main() async {
   //  removing hash signature from the url
   WidgetsFlutterBinding.ensureInitialized();
-
+  await GetStorage.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -44,7 +45,7 @@ class App extends StatelessWidget {
           theme: TAppTheme.lightTheme,
           darkTheme: TAppTheme.darkTheme,
           getPages: TAppRoutes.allRoutes,
-          initialRoute: TRoutes.loginScreen,
+          initialRoute: TRoutes.splashScreen,
           builder: (context, widget) {
             // Optional for textScale fix
             ScreenUtil.init(context);

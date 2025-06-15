@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../data/models/trip_model.dart';
 
@@ -28,6 +29,7 @@ class TripController extends GetxController {
   var allDrivers = <String>[].obs;
   var allSources = <String>[].obs;
   var allDestination = <String>[].obs;
+  var loggedInUserMobileNo = ''.obs;
 
 
   final GlobalKey<FormState> tripFormKeyA = GlobalKey<FormState>();
@@ -42,10 +44,16 @@ class TripController extends GetxController {
     );
   }
 
+  Future<void> getUser() async{
+
+    loggedInUserMobileNo.value =  await GetStorage().read('user_mobile_no');
+  }
+
   @override
   void onInit() {
     super.onInit();
     fetchDriversAndVehicles();
+    getUser();
   }
 
   Future<void> createTrip(TripModel trip) async {
