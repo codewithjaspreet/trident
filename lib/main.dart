@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:trident/common/widgets/layouts/templates/site_layout.dart';
 import 'package:trident/routes/app_routes.dart';
 import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/text_strings.dart';

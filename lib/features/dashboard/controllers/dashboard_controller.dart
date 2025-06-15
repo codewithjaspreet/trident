@@ -18,6 +18,7 @@ class DashBoardController extends GetxController {
   final _storage = GetStorage();
 
   final currentScreen = 'dashboard'.obs;
+  final userRole = 'driver'.obs;
   var isLoading = false.obs;
 
   final loggedInUser = UserModel(userRole: '', userMobileNumber: '').obs;
@@ -25,7 +26,16 @@ class DashBoardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initializeDashboard();
+    print('[Controller] onInit called'); // <-- crucial
+     isLoading.value = true;
+    _loadInitialData();
+    isLoading.value = false;
+  }
+
+  Future<void> _loadInitialData() async {
+    isLoading.value = true;
+    await _initializeDashboard();
+    isLoading.value = false;
   }
 
   /// Main flow controller: ensures user role is loaded before loading trips
@@ -33,6 +43,7 @@ class DashBoardController extends GetxController {
     await getUserRole();
 
     if (loggedInUser.value.userRole == 'driver') {
+      print('This is driver');
       await getAllDriverAssignedTrips();
     } else {
       await getAllAdminCreatedTrips();
@@ -43,7 +54,7 @@ class DashBoardController extends GetxController {
   Future<void> getUserRole() async {
     loggedInUser.value.userRole = _storage.read('user_role') ?? '';
     loggedInUser.value.userMobileNumber = _storage.read('user_mobile_no') ?? '';
-    debugPrint('[User] Role: ${loggedInUser.value.userRole}, Mobile: ${loggedInUser.value.userMobileNumber}');
+    print('[User] Role: ${loggedInUser.value.userRole}, Mobile: ${loggedInUser.value.userMobileNumber}');
   }
 
   /// Switch the visible screen on desktop
@@ -60,26 +71,24 @@ class DashBoardController extends GetxController {
         .map((doc) => TripModel.fromJson(doc.data()))
         .toList();
 
-    debugPrint('[Trips] Loaded ${allCreatedTrips.length} admin trips');
+    print('[Trips] Loaded ${allCreatedTrips.length} admin trips');
   }
 
 
-
   Future<void> getAllDriverAssignedTrips() async {
-    final rawMobile = loggedInUser.value.userMobileNumber;
-
-    if (rawMobile.isEmpty) {
-      debugPrint('[Error] Driver mobile number not available. Cannot resolve driver.');
-      return;
-    }
-
-    // Normalize to 10-digit number (if stored without country code in Firestore)
+    final rawMobile = loggedInUser.value.userMobileNumber.trim();
     final cleanMobile = rawMobile.startsWith('+91')
         ? rawMobile.replaceFirst('+91', '')
         : rawMobile;
 
+    print('[DriverTrips] Looking up trips for mobile: "$cleanMobile"');
+
+    if (cleanMobile.isEmpty) {
+      print('[DriverTrips] Error: Mobile number is empty.');
+      return;
+    }
+
     try {
-      // Step 1: Get driver document using mobileNo
       final driverSnapshot = await _fireStore
           .collection('drivers')
           .where('mobileNo', isEqualTo: cleanMobile)
@@ -87,19 +96,16 @@ class DashBoardController extends GetxController {
           .get();
 
       if (driverSnapshot.docs.isEmpty) {
-        debugPrint('[Error] No driver found with mobileNo: $cleanMobile');
+        print('[DriverTrips] No driver found with mobileNo: "$cleanMobile"');
         return;
       }
 
-      final driverDoc = driverSnapshot.docs.first;
-      final driverName = driverDoc['name'];
-
+      final driverName = driverSnapshot.docs.first['driverName']?.toString().trim();
       if (driverName == null || driverName.isEmpty) {
-        debugPrint('[Error] Driver name is empty for mobileNo: $cleanMobile');
+        print('[DriverTrips] Error: Driver name is empty.');
         return;
       }
 
-      // Step 2: Get trips where driverName matches
       final tripSnapshot = await _fireStore
           .collection('trips')
           .where('driverName', isEqualTo: driverName)
@@ -109,11 +115,12 @@ class DashBoardController extends GetxController {
           .map((doc) => TripModel.fromJson(doc.data()))
           .toList();
 
-      debugPrint('[Trips] Loaded ${allCreatedTrips.length} trips for driver: $driverName');
+      print('[DriverTrips] Loaded ${allCreatedTrips.length} trips for "$driverName"');
     } catch (e) {
-      debugPrint('[Error] Failed to fetch driver trips: $e');
+      print('[DriverTrips] Failed to fetch trips: $e');
     }
   }
+
 
 
 

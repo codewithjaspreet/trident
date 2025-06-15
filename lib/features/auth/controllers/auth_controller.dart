@@ -148,6 +148,7 @@ class AuthController extends GetxController {
     if (userDoc.exists) {
       final role = userDoc['role'];
       await _storage.write('user_role', role);
+      await _storage.write('user_mobile_no', user.phoneNumber);
     } else {
       // First time user - default to driver
       await _firestore.collection('users').doc(user.uid).set({
