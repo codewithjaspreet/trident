@@ -395,7 +395,7 @@ class TripCard extends StatelessWidget {
 
   String _getTimeAgo() {
     final now = DateTime.now();
-    final difference = now.difference(trip.tripDate);
+    final difference = now.difference(trip.createdAt!);
 
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';

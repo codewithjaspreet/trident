@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trident/data/models/trip_stage_model.dart';
 
 class TripModel {
   String billedTo;
@@ -6,13 +7,13 @@ class TripModel {
   String driverName;
   String source;
   String destination;
-  DateTime tripDate;
   String tripType;
   String status;
   String createdBy;
-
-  // Optional field, not part of constructor
+  String? currentStage;
+  DateTime? tripDate;
   DateTime? createdAt;
+  List<TripStageModel> stages;
 
   TripModel({
     required this.billedTo,
@@ -20,10 +21,13 @@ class TripModel {
     required this.driverName,
     required this.source,
     required this.destination,
-    required this.tripDate,
     required this.tripType,
     required this.createdBy,
     this.status = 'pending',
+    this.currentStage,
+    this.tripDate,
+    this.createdAt,
+    this.stages = const [],
   });
 
   factory TripModel.fromJson(Map<String, dynamic> json) {
@@ -33,11 +37,17 @@ class TripModel {
       driverName: json['driverName'] ?? '',
       source: json['source'] ?? '',
       destination: json['destination'] ?? '',
-      tripDate: (json['tripDate'] as Timestamp).toDate(),
       tripType: json['tripType'] ?? '',
       status: json['status'] ?? '',
       createdBy: json['createdBy'] ?? '',
-    )..createdAt = (json['createdAt'] as Timestamp?)?.toDate(); // set after constructor
+      currentStage: json['currentStage'],
+      tripDate: (json['tripDate'] as Timestamp?)?.toDate(),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      stages: (json['stages'] as List<dynamic>?)
+          ?.map((e) => TripStageModel.fromMap(e))
+          .toList() ??
+          [],
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -47,11 +57,13 @@ class TripModel {
       'driverName': driverName,
       'source': source,
       'destination': destination,
-      'tripDate': Timestamp.fromDate(tripDate),
       'tripType': tripType,
       'status': status,
       'createdBy': createdBy,
+      'tripDate': tripDate != null ? Timestamp.fromDate(tripDate!) : null,
       'createdAt': FieldValue.serverTimestamp(),
+      'currentStage': currentStage ?? '',
+      'stages': stages.map((s) => s.toMap()).toList(),
     };
   }
 }

@@ -111,7 +111,7 @@ class TripDataTableSource extends DataTableSource {
         DataCell(Text(trip.driverName)),
         DataCell(Text(trip.billedVehicle)),
         DataCell(Text(trip.status)),
-        DataCell(Text(DateFormat('dd MMM yyyy, hh:mm:ss a', 'en_IN').format(trip.tripDate.toLocal()))),
+        DataCell(Text(DateFormat('dd MMM yyyy, hh:mm:ss a', 'en_IN').format(trip.createdAt!.toLocal()))),
 
       ],
     );

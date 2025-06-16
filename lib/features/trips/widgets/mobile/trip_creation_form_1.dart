@@ -85,8 +85,6 @@ class TripCreationFormA extends StatelessWidget {
               )
                   : Column(
                 children: [
-                   DeliveryDatePicker( tripController: tripController ,),
-                  const SizedBox(height: TSizes.spaceBtwSections),
                   TDropDown(
                     items: const [
                       'Mother Dairy',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:trident/localization/app_translations.dart';
 import 'package:trident/routes/app_routes.dart';
 import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/text_strings.dart';
@@ -38,6 +39,8 @@ class App extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
+          translations: AppTranslations(),
+          locale: const Locale('en', 'US'),
           debugShowCheckedModeBanner: false,
           title: TTexts.appName,
           themeMode: ThemeMode.light,

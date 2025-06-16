@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../data/models/trip_model.dart';
+import '../../dashboard/widgets/mobile/driver_trip_tracking.dart';
 
 class TripController extends GetxController {
   final PageController pageController = PageController();
@@ -30,6 +33,67 @@ class TripController extends GetxController {
   var allSources = <String>[].obs;
   var allDestination = <String>[].obs;
   var loggedInUserMobileNo = ''.obs;
+
+
+  // Trip Stages
+  final RxList<TripStage> stages = <TripStage>[
+    TripStage(name: "Loading", icon: Icons.upload),
+    TripStage(name: "Loaded", icon: Icons.inventory),
+    TripStage(name: "Dispatched", icon: Icons.local_shipping),
+  ].obs;
+
+  RxInt currentStageIndex = 0.obs;
+
+  bool get allStagesCompleted => stages.every((stage) => stage.isCompleted);
+
+  int get nextIncompleteStageIndex {
+    for (int i = 0; i < stages.length; i++) {
+      if (!stages[i].isCompleted) return i;
+    }
+    return stages.length;
+  }
+
+  void toggleStageExpansion(int index) {
+    stages[index].isExpanded = !stages[index].isExpanded;
+    stages.refresh();
+  }
+
+  void markStageDone(int index) {
+    if (index == nextIncompleteStageIndex) {
+      stages[index].isCompleted = true;
+      stages[index].completedAt = DateTime.now();
+      currentStageIndex.value = nextIncompleteStageIndex;
+      stages.refresh();
+    } else {
+      Get.snackbar(
+        "Invalid Action",
+        "Please complete stages in sequential order",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        margin: EdgeInsets.all(16.w),
+      );
+    }
+  }
+
+  void updateStageNote(int index, String note) {
+    stages[index].note = note;
+    stages.refresh();
+  }
+
+  void completeTrip() {
+    if (allStagesCompleted) {
+      Get.snackbar(
+        "Success",
+        "Trip completed successfully!",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.shade100,
+        colorText: Colors.green.shade800,
+        margin: EdgeInsets.all(16.w),
+      );
+      Get.offAllNamed('/dashboard');
+    }
+  }
 
 
   final GlobalKey<FormState> tripFormKeyA = GlobalKey<FormState>();

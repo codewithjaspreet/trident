@@ -8,6 +8,7 @@ import 'package:trident/common/widgets/containers/rounded_container.dart';
 import 'package:trident/common/widgets/images/t_rounded_image.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/features/auth/controllers/auth_controller.dart';
+import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/constants/colors.dart';
 import 'package:trident/utils/constants/enums.dart';
@@ -23,6 +24,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
     final isMobile = TDeviceUtils.isMobileScreen(context);
     SideBarController sideBarController = Get.put(SideBarController());
     AuthController authController = Get.put(AuthController());
+    DashBoardController dashBoardController = Get.put(DashBoardController());
 
     // ------------------- MOBILE APPBAR -------------------
     if (isMobile) {
@@ -63,8 +65,29 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
                     GestureDetector(
                       onTap: () => authController.logout(),
                         child: const Icon(Iconsax.logout)),
+
+
                     //     size: TSizes.md * 2, color: TColors.secondary),
                     const SizedBox(width: TSizes.md ),
+
+                    GestureDetector(
+                      onTap: () {
+
+                        if(dashBoardController.selectedLanguage == 'en') {
+                          dashBoardController.selectedLanguage.value = 'HI';
+
+                          Get.updateLocale(const Locale('hi', 'IN'));
+
+                        }
+                        else {
+                          dashBoardController.selectedLanguage.value = 'en';
+                          Get.updateLocale(const Locale('en', 'US'));
+                        }
+                      },
+                      child:  Text(dashBoardController.selectedLanguage == 'en' ? 'EN' : 'HI'),
+                    ),
+                    const SizedBox(width: TSizes.md ),
+
                     InkWell(
                       onTap: () => Scaffold.of(context).openDrawer(),
                       child: ClipOval(

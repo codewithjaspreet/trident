@@ -17,6 +17,7 @@ class DashBoardController extends GetxController {
   final _fireStore = FirebaseFirestore.instance;
   final _storage = GetStorage();
 
+  var selectedLanguage = 'en'.obs;
   final currentScreen = 'dashboard'.obs;
   final userRole = 'driver'.obs;
   var isLoading = false.obs;
@@ -65,13 +66,23 @@ class DashBoardController extends GetxController {
 
   /// Load trips for admin
   Future<void> getAllAdminCreatedTrips() async {
-    final snapshot = await _fireStore.collection('trips').get();
+    final rawMobile = loggedInUser.value.userMobileNumber.trim();
+    final formattedMobile = rawMobile;
 
-    allCreatedTrips.value = snapshot.docs
-        .map((doc) => TripModel.fromJson(doc.data()))
-        .toList();
+    try {
+      final snapshot = await _fireStore
+          .collection('trips')
+          .where('createdBy', isEqualTo: formattedMobile)
+          .get();
 
-    print('[Trips] Loaded ${allCreatedTrips.length} admin trips');
+      allCreatedTrips.value = snapshot.docs
+          .map((doc) => TripModel.fromJson(doc.data()))
+          .toList();
+
+      print('[Trips] Loaded ${allCreatedTrips.length} filtered admin trips');
+    } catch (e) {
+      print('[Trips] Error fetching filtered trips: $e');
+    }
   }
 
 
