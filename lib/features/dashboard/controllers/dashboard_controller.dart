@@ -28,7 +28,7 @@ class DashBoardController extends GetxController {
   void onInit() {
     super.onInit();
     print('[Controller] onInit called'); // <-- crucial
-     isLoading.value = true;
+    isLoading.value = true;
     _loadInitialData();
     isLoading.value = false;
   }
@@ -55,7 +55,8 @@ class DashBoardController extends GetxController {
   Future<void> getUserRole() async {
     loggedInUser.value.userRole = _storage.read('user_role') ?? '';
     loggedInUser.value.userMobileNumber = _storage.read('user_mobile_no') ?? '';
-    print('[User] Role: ${loggedInUser.value.userRole}, Mobile: ${loggedInUser.value.userMobileNumber}');
+    print(
+        '[User] Role: ${loggedInUser.value.userRole}, Mobile: ${loggedInUser.value.userMobileNumber}');
   }
 
   /// Switch the visible screen on desktop
@@ -67,7 +68,7 @@ class DashBoardController extends GetxController {
   /// Load trips for admin
   Future<void> getAllAdminCreatedTrips() async {
     final rawMobile = loggedInUser.value.userMobileNumber.trim();
-    final formattedMobile = rawMobile;
+    final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
 
     try {
       final snapshot = await _fireStore
@@ -75,9 +76,8 @@ class DashBoardController extends GetxController {
           .where('createdBy', isEqualTo: formattedMobile)
           .get();
 
-      allCreatedTrips.value = snapshot.docs
-          .map((doc) => TripModel.fromJson(doc.data()))
-          .toList();
+      allCreatedTrips.value =
+          snapshot.docs.map((doc) => TripModel.fromJson(doc.data())).toList();
 
       print('[Trips] Loaded ${allCreatedTrips.length} filtered admin trips');
     } catch (e) {
@@ -111,7 +111,8 @@ class DashBoardController extends GetxController {
         return;
       }
 
-      final driverName = driverSnapshot.docs.first['driverName']?.toString().trim();
+      final driverName =
+          driverSnapshot.docs.first['driverName']?.toString().trim();
       if (driverName == null || driverName.isEmpty) {
         print('[DriverTrips] Error: Driver name is empty.');
         return;
@@ -126,13 +127,10 @@ class DashBoardController extends GetxController {
           .map((doc) => TripModel.fromJson(doc.data()))
           .toList();
 
-      print('[DriverTrips] Loaded ${allCreatedTrips.length} trips for "$driverName"');
+      print(
+          '[DriverTrips] Loaded ${allCreatedTrips.length} trips for "$driverName"');
     } catch (e) {
       print('[DriverTrips] Failed to fetch trips: $e');
     }
   }
-
-
-
-
 }

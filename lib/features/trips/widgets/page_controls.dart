@@ -87,8 +87,9 @@ class PageControls extends StatelessWidget {
                   destination: tripController.selectedDestination.value,
                   status: 'Open',
                   tripType: tripController.tripType.value,
+                  completedAt: null,
                   createdBy: userMobileNo.toString(),
-                  currentStage: 'Loading',
+
                   stages: [
                     TripStageModel(name: 'Loading'),
                     TripStageModel(name: 'Loaded'),

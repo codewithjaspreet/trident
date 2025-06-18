@@ -13,6 +13,7 @@ class TripModel {
   String? currentStage;
   DateTime? tripDate;
   DateTime? createdAt;
+  DateTime? completedAt;
   List<TripStageModel> stages;
 
   TripModel({
@@ -27,6 +28,7 @@ class TripModel {
     this.currentStage,
     this.tripDate,
     this.createdAt,
+    this.completedAt,
     this.stages = const [],
   });
 
@@ -40,8 +42,6 @@ class TripModel {
       tripType: json['tripType'] ?? '',
       status: json['status'] ?? '',
       createdBy: json['createdBy'] ?? '',
-      currentStage: json['currentStage'],
-      tripDate: (json['tripDate'] as Timestamp?)?.toDate(),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
       stages: (json['stages'] as List<dynamic>?)
           ?.map((e) => TripStageModel.fromMap(e))
@@ -60,9 +60,8 @@ class TripModel {
       'tripType': tripType,
       'status': status,
       'createdBy': createdBy,
-      'tripDate': tripDate != null ? Timestamp.fromDate(tripDate!) : null,
       'createdAt': FieldValue.serverTimestamp(),
-      'currentStage': currentStage ?? '',
+      'completedAt': null,
       'stages': stages.map((s) => s.toMap()).toList(),
     };
   }

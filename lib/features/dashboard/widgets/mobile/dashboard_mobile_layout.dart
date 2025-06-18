@@ -236,25 +236,25 @@ class DashboardMobileLayout extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: TSizes.sm / 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TripStatItem(
-                      title: dashBoardController.loggedInUser.value.userRole !=
-                              'admin'
-                          ? 'Accepted Trips'
-                          : 'Created Trips',
-                      count: '85'),
-                  dashBoardController.loggedInUser.value.userRole != 'admin'
-                      ? const SizedBox.shrink()
-                      : const TripStatItem(title: 'Completed Trips', count: '4356'),
-                   TripStatItem(title:
-
-                  dashBoardController.loggedInUser.value.userRole == 'admin'  ?
-                  'Active Trips' : 'Rejected Trips', count: '25'),
-                ],
-              ),
+              // const SizedBox(height: TSizes.sm / 2),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     TripStatItem(
+              //         title: dashBoardController.loggedInUser.value.userRole !=
+              //                 'admin'
+              //             ? 'Accepted Trips'
+              //             : 'Created Trips',
+              //         count: '85'),
+              //     dashBoardController.loggedInUser.value.userRole != 'admin'
+              //         ? const SizedBox.shrink()
+              //         : const TripStatItem(title: 'Completed Trips', count: '4356'),
+              //      TripStatItem(title:
+              //
+              //     dashBoardController.loggedInUser.value.userRole == 'admin'  ?
+              //     'Active Trips' : 'Rejected Trips', count: '25'),
+              //   ],
+              // ),
               const SizedBox(height: TSizes.lg),
 
               dashBoardController.loggedInUser.value.userRole == 'admin' ?
@@ -278,7 +278,6 @@ class DashboardMobileLayout extends StatelessWidget {
                         if (role == 'admin') {
                           await dashBoardController.getAllAdminCreatedTrips();
                         } else {
-                          print('hitting');
                           await dashBoardController.getAllDriverAssignedTrips();
                         }
                         dashBoardController.isLoading.value = false;

@@ -10,6 +10,7 @@ import '../../dashboard/widgets/mobile/driver_trip_tracking.dart';
 
 class TripController extends GetxController {
   final PageController pageController = PageController();
+  final _fireStore = FirebaseFirestore.instance;
 
   // Page Controller Variables for mobile view
   var pageIndex = 0.obs;
@@ -57,23 +58,73 @@ class TripController extends GetxController {
     stages[index].isExpanded = !stages[index].isExpanded;
     stages.refresh();
   }
+  Future<void> markTripStageDoneByCreatedAt(int index, DateTime createdAt) async {
 
-  void markStageDone(int index) {
-    if (index == nextIncompleteStageIndex) {
-      stages[index].isCompleted = true;
-      stages[index].completedAt = DateTime.now();
-      currentStageIndex.value = nextIncompleteStageIndex;
-      stages.refresh();
-    } else {
-      Get.snackbar(
-        "Invalid Action",
-        "Please complete stages in sequential order",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade800,
-        margin: EdgeInsets.all(16.w),
+    try {
+      // Step 1: Fetch trip by createdAt timestamp
+      final snapshot = await _fireStore
+          .collection('trips')
+          .where('createdAt', isEqualTo: Timestamp.fromDate(createdAt))
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        print('[Error] No trip found with given createdAt');
+        return;
+      }
+
+      final tripDoc = snapshot.docs.first;
+      final tripId = tripDoc.id;
+      final stages = List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
+
+      if (index >= stages.length) {
+        print('[Error] Invalid stage index');
+        return;
+      }
+
+      final nextIndex = stages.indexWhere((s) => s['isCompleted'] == false);
+      if (index != nextIndex) {
+        Get.snackbar(
+          "Invalid Action",
+          "Please complete stages in sequential order",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+          margin: EdgeInsets.all(16.w),
+        );
+        return;
+      }
+
+      // Step 2: Update selected stage
+      stages[index]['isCompleted'] = true;
+      stages[index]['completedAt'] = Timestamp.now();
+
+      // Step 3: Determine last completed stage name
+      final lastCompleted = stages.lastWhere(
+            (s) => s['isCompleted'] == true,
       );
+
+      final currentStageName = lastCompleted?['name'] ?? '';
+
+      // Step 4: Update Firestore document
+      await _fireStore.collection('trips').doc(tripId).update({
+        'stages': stages,
+        'status': currentStageName,
+      });
+
+      print('[Success] Stage ${index + 1} marked as completed. Current stage: $currentStageName');
+    } catch (e) {
+      print('[Error] Failed to mark stage as done: $e');
     }
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> tripStreamByCreatedAt(DateTime createdAt) {
+    return FirebaseFirestore.instance
+        .collection('trips')
+        .where('createdAt', isEqualTo: Timestamp.fromDate(createdAt))
+        .limit(1)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.first);
   }
 
   void updateStageNote(int index, String note) {

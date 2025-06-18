@@ -22,7 +22,7 @@ class DriverAssignedTripCard extends StatelessWidget {
     return TRoundedContainer(
       onTap: () {
         Get.to(const TripTimelineScreen(),
-            arguments: [trip.source, trip.destination, trip.billedTo]);
+            arguments: [trip.source, trip.destination, trip.billedTo,trip.createdAt]);
       },
       margin:
           EdgeInsets.symmetric(horizontal: TSizes.md.w, vertical: TSizes.sm.h),
@@ -203,7 +203,7 @@ class DriverAssignedTripCard extends StatelessWidget {
             Expanded(
               child: _buildDetailItem(
                 icon: Icons.person_outline,
-                label: 'hello'.tr,
+                label: 'Created By'.tr,
                 value: trip.createdBy,
                 iconColor: const Color(0xFF8B5CF6),
               ),

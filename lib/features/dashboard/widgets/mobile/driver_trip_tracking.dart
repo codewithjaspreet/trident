@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:trident/features/trips/controllers/trip_controller.dart';
+import 'package:trident/routes/routes.dart';
 
 // Trip Stage Model
 class TripStage {
@@ -57,14 +59,30 @@ class TripTimelineScreen extends StatelessWidget {
                     SizedBox(height: 24.h),
 
                     // Trip Timeline Section
-                    _buildTimelineSection(controller),
+                    _buildTimelineSection(controller, args),
 
                     SizedBox(height: 24.h),
 
                     // Complete Trip Button
-                    Obx(() => controller.allStagesCompleted
-                        ? _buildCompleteButton(controller)
-                        : const SizedBox.shrink()),
+                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      stream: controller.tripStreamByCreatedAt(args[3]),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const SizedBox.shrink();
+
+                        final tripData = snapshot.data!.data();
+                        if (tripData == null || tripData['stages'] == null) return const SizedBox.shrink();
+
+                        final stages = List<Map<String, dynamic>>.from(tripData['stages']);
+                        final allCompleted = stages.every((s) => s['isCompleted'] == true);
+
+                        return allCompleted
+                            ? Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: _buildCompleteButton(snapshot.data!.id),
+                        )
+                            : const SizedBox.shrink();
+                      },
+                    ),
 
                     SizedBox(height: 32.h),
                   ],
@@ -182,7 +200,7 @@ class TripTimelineScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineSection(TripController controller) {
+  Widget _buildTimelineSection(TripController controller, dynamic args) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
@@ -209,20 +227,52 @@ class TripTimelineScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20.h),
-          Obx(() => Column(
-                children: List.generate(controller.stages.length, (index) {
-                  return _buildTimelineStage(controller, index);
+          StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            stream: controller.tripStreamByCreatedAt(args[3]),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final tripData = snapshot.data!.data();
+              if (tripData == null || tripData['stages'] == null) {
+                return const Text('No stages found.');
+              }
+
+              final stages =
+                  List<Map<String, dynamic>>.from(tripData['stages']);
+              final nextIncompleteStageIndex =
+                  stages.indexWhere((stage) => stage['isCompleted'] == false);
+
+              return Column(
+                children: List.generate(stages.length, (index) {
+                  final stage = stages[index];
+                  final canComplete = !stage['isCompleted'] &&
+                      index == nextIncompleteStageIndex;
+                  return _buildRealtimeTimelineStage(
+                      stage, index, args, controller, canComplete);
                 }),
-              )),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTimelineStage(TripController controller, int index) {
-    final stage = controller.stages[index];
+  Widget _buildRealtimeTimelineStage(
+    Map<String, dynamic> stage,
+    int index,
+    dynamic args,
+    TripController controller,
+    bool canComplete,
+  ) {
+    final isCompleted = stage['isCompleted'] == true;
     final isLast = index == controller.stages.length - 1;
-    final canComplete = index == controller.nextIncompleteStageIndex;
+
+    final completedAt = stage['completedAt'] != null
+        ? (stage['completedAt'] as Timestamp).toDate()
+        : null;
 
     return Column(
       children: [
@@ -237,14 +287,14 @@ class TripTimelineScreen extends StatelessWidget {
                   height: 32.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: stage.isCompleted
+                    color: isCompleted
                         ? Colors.green
                         : canComplete
                             ? Colors.blue
                             : Colors.grey.shade300,
                   ),
                   child: Icon(
-                    stage.isCompleted ? Icons.check : stage.icon,
+                    isCompleted ? Icons.check : Icons.circle,
                     color: Colors.white,
                     size: 16.sp,
                   ),
@@ -257,50 +307,26 @@ class TripTimelineScreen extends StatelessWidget {
                   ),
               ],
             ),
-
             SizedBox(width: 16.w),
-
             // Stage content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () => controller.toggleStageExpansion(index),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Row(
-                        children: [
-                          Text(
-                            stage.name,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: stage.isCompleted
-                                  ? Colors.green.shade700
-                                  : Colors.black87,
-                            ),
-                          ),
-                          const Spacer(),
-                          if (stage.isCompleted || canComplete)
-                            Icon(
-                              stage.isExpanded
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
-                              color: Colors.grey.shade600,
-                              size: 20.sp,
-                            ),
-                        ],
-                      ),
+                  Text(
+                    stage['name'] ?? '',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isCompleted ? Colors.green.shade700 : Colors.black87,
                     ),
                   ),
-
-                  // Completed timestamp
-                  if (stage.isCompleted && stage.completedAt != null)
+                  if (completedAt != null)
                     Padding(
                       padding: EdgeInsets.only(bottom: 8.h),
                       child: Text(
-                        'Completed: ${_formatDateTime(stage.completedAt!)}',
+                        'Completed: ${_formatDateTime(completedAt)}',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.green.shade600,
@@ -308,10 +334,29 @@ class TripTimelineScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                  // Expandable content
-                  if (stage.isExpanded && (stage.isCompleted || canComplete))
-                    _buildStageExpandedContent(controller, index),
+                  if (!isCompleted && canComplete)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => controller
+                            .markTripStageDoneByCreatedAt(index, args[3]),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Mark as Done',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    )
                 ],
               ),
             ),
@@ -322,7 +367,8 @@ class TripTimelineScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStageExpandedContent(TripController controller, int index) {
+  Widget _buildStageExpandedContent(
+      TripController controller, int index, dynamic args) {
     final stage = controller.stages[index];
     TextEditingController noteController =
         TextEditingController(text: stage.note);
@@ -342,7 +388,8 @@ class TripTimelineScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.markStageDone(index),
+                onPressed: () =>
+                    controller.markTripStageDoneByCreatedAt(index, args[3]),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
@@ -367,11 +414,44 @@ class TripTimelineScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCompleteButton(TripController controller) {
+  Widget _buildCompleteButton(String tripId) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: controller.completeTrip,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          try {
+            await FirebaseFirestore.instance.collection('trips').doc(tripId).update({
+              'status': 'Completed',
+            });
+
+            Get.snackbar(
+              'Trip Completed',
+              'Trip marked as completed successfully!',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green.shade50,
+              colorText: Colors.green.shade800,
+              margin: EdgeInsets.all(16.w),
+            );
+
+            Get.offAllNamed(TRoutes.dashBoardScreen);
+          } catch (e) {
+            Get.snackbar(
+              'Error',
+              'Something went wrong while completing the trip.',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade50,
+              colorText: Colors.red.shade800,
+            );
+          }
+        },
+        icon: const Icon(Icons.check_circle_outline),
+        label: Text(
+          'Mark Trip Complete',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
@@ -381,16 +461,10 @@ class TripTimelineScreen extends StatelessWidget {
           ),
           elevation: 2,
         ),
-        child: Text(
-          'Complete Trip',
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ),
     );
   }
+
 
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
