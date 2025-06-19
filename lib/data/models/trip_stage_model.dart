@@ -14,9 +14,9 @@ class TripStageModel {
   factory TripStageModel.fromMap(Map<String, dynamic> map) {
     return TripStageModel(
       name: map['name'] ?? '',
-      isCompleted: map['isCompleted'] ?? false,
-      completedAt: map['completedAt'] != null
-          ? (map['completedAt'] as Timestamp).toDate()
+      isCompleted: map['is_completed'] ?? false,
+      completedAt: map['completed_at'] != null
+          ? (map['completed_at'] as Timestamp).toDate()
           : null,
     );
   }
@@ -24,8 +24,8 @@ class TripStageModel {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'isCompleted': isCompleted,
-      'completedAt':
+      'is_completed': isCompleted,
+      'completed_at':
           completedAt != null ? Timestamp.fromDate(completedAt!) : null,
     };
   }

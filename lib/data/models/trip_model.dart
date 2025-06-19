@@ -34,15 +34,15 @@ class TripModel {
 
   factory TripModel.fromJson(Map<String, dynamic> json) {
     return TripModel(
-      billedTo: json['billedTo'] ?? '',
-      billedVehicle: json['billedVehicle'] ?? '',
-      driverName: json['driverName'] ?? '',
-      source: json['source'] ?? '',
+      billedTo: json['billed_to'] ?? '',
+      billedVehicle: json['billed_vehicle'] ?? '',
+      driverName: json['driver_name'] ?? '',
+      source: json['sources'] ?? '',
       destination: json['destination'] ?? '',
-      tripType: json['tripType'] ?? '',
-      status: json['status'] ?? '',
-      createdBy: json['createdBy'] ?? '',
-      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      tripType: json['trip_type'] ?? '',
+      status: json['trip_status'] ?? '',
+      createdBy: json['created_by'] ?? '',
+      createdAt: (json['created_at'] as Timestamp?)?.toDate(),
       stages: (json['stages'] as List<dynamic>?)
           ?.map((e) => TripStageModel.fromMap(e))
           .toList() ??
@@ -52,16 +52,15 @@ class TripModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'billedTo': billedTo,
-      'billedVehicle': billedVehicle,
-      'driverName': driverName,
-      'source': source,
+      'billed_to': billedTo,
+      'billed_vehicle': billedVehicle,
+      'driver_name': driverName,
+      'sources': source,
       'destination': destination,
-      'tripType': tripType,
-      'status': status,
-      'createdBy': createdBy,
-      'createdAt': FieldValue.serverTimestamp(),
-      'completedAt': null,
+      'trip_type': tripType,
+      'trip_status': status,
+      'created_by': createdBy,
+      'created_at': FieldValue.serverTimestamp(),
       'stages': stages.map((s) => s.toMap()).toList(),
     };
   }

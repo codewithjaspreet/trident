@@ -64,7 +64,7 @@ class TripController extends GetxController {
       // Step 1: Fetch trip by createdAt timestamp
       final snapshot = await _fireStore
           .collection('trips')
-          .where('createdAt', isEqualTo: Timestamp.fromDate(createdAt))
+          .where('created_at', isEqualTo: Timestamp.fromDate(createdAt))
           .limit(1)
           .get();
 
@@ -82,7 +82,7 @@ class TripController extends GetxController {
         return;
       }
 
-      final nextIndex = stages.indexWhere((s) => s['isCompleted'] == false);
+      final nextIndex = stages.indexWhere((s) => s['is_completed'] == false);
       if (index != nextIndex) {
         Get.snackbar(
           "Invalid Action",
@@ -96,12 +96,12 @@ class TripController extends GetxController {
       }
 
       // Step 2: Update selected stage
-      stages[index]['isCompleted'] = true;
-      stages[index]['completedAt'] = Timestamp.now();
+      stages[index]['is_completed'] = true;
+      stages[index]['completed_at'] = Timestamp.now();
 
       // Step 3: Determine last completed stage name
       final lastCompleted = stages.lastWhere(
-            (s) => s['isCompleted'] == true,
+            (s) => s['is_completed'] == true,
       );
 
       final currentStageName = lastCompleted?['name'] ?? '';
@@ -109,7 +109,7 @@ class TripController extends GetxController {
       // Step 4: Update Firestore document
       await _fireStore.collection('trips').doc(tripId).update({
         'stages': stages,
-        'status': currentStageName,
+        'trip_status': currentStageName,
       });
 
       print('[Success] Stage ${index + 1} marked as completed. Current stage: $currentStageName');
@@ -121,7 +121,7 @@ class TripController extends GetxController {
   Stream<DocumentSnapshot<Map<String, dynamic>>> tripStreamByCreatedAt(DateTime createdAt) {
     return FirebaseFirestore.instance
         .collection('trips')
-        .where('createdAt', isEqualTo: Timestamp.fromDate(createdAt))
+        .where('created_at', isEqualTo: Timestamp.fromDate(createdAt))
         .limit(1)
         .snapshots()
         .map((snapshot) => snapshot.docs.first);

@@ -196,7 +196,10 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: TSizes.lg),
 
           GestureDetector(
-              onTap: () => Get.offAll(TRoutes.loginScreen),
+              onTap: () {
+                authController.logout();
+
+    },
               child: const Icon(Iconsax.logout)),
           // Profile Card
           TRoundedContainer(

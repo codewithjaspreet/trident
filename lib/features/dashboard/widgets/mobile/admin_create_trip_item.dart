@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../common/widgets/containers/rounded_container.dart';
 import '../../../../data/models/trip_model.dart';
 import '../../../../utils/constants/sizes.dart';
+import '../../controllers/dashboard_controller.dart';
+import 'driver_trip_tracking.dart';
 
 class TripCard extends StatelessWidget {
   final TripModel trip;
@@ -18,6 +22,12 @@ class TripCard extends StatelessWidget {
         DateFormat('d MMMM y \'at\' h:mm a').format(trip.createdAt!);
 
     return TRoundedContainer(
+      onTap: (){
+        final dashboardController = Get.find<DashBoardController>();
+        Get.to(const TripTimelineScreen(),
+            arguments: [trip.source, trip.destination, trip.billedTo,trip.createdAt,dashboardController.loggedInUser.value.userRole ]);
+
+      },
       margin:
           EdgeInsets.symmetric(horizontal: TSizes.md.w, vertical: TSizes.sm.h),
       padding: EdgeInsets.all(TSizes.md.w),

@@ -165,21 +165,19 @@ class AuthController extends GetxController {
       Get.toNamed(TRoutes.dashBoardScreen);
     });
   }
-
   Future<void> logout() async {
     try {
-      await _auth.signOut();            // Firebase sign out
-      await _storage.erase();           // Clear local storage
+      await _auth.signOut();
+      await _storage.erase();
       phoneController.clear();
       otpController.clear();
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        debugPrint('[Navigation] Redirecting to Login Screen from logout');
-        Get.toNamed(TRoutes.loginScreen);
-      });
+      debugPrint('[Navigation] Redirecting to Login Screen from logout');
+      Get.offAllNamed(TRoutes.loginScreen); // No need for postFrameCallback
     } catch (e) {
       Get.snackbar('Logout Failed', '$e.');
       debugPrint('[Error] Logout Failed: $e');
     }
   }
+
 }
