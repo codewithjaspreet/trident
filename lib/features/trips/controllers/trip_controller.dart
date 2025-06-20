@@ -28,7 +28,7 @@ class TripController extends GetxController {
   var estimatedDistance = 0.0.obs;
 
   var tripType = 'OS'.obs;
-  var allVendors = [].obs;
+  var allVendors = <String>[].obs;
   var allVehicles = <String>[].obs;
   var allDrivers = <String>[].obs;
   var allSources = <String>[].obs;
@@ -188,6 +188,7 @@ class TripController extends GetxController {
     final vehicleSnapshot = await fireStore.collection('vehicles').get();
     final destinationSnapshots = await fireStore.collection('destinations').get();
     final allSourcesSnapshots = await fireStore.collection('sources').get();
+    final allVendorsSnapshots = await fireStore.collection('vendors').get();
 
     allDrivers.value =
         driverSnapshot.docs.map((doc) => doc['driverName'] as String).toList();
@@ -206,6 +207,10 @@ class TripController extends GetxController {
         .map((doc) => doc['source'] as String)
         .toList();
 
+
+    allVendors.value = allVendorsSnapshots.docs
+        .map((doc) => doc['vendor_name'] as String)
+        .toList();
 
   }
 }

@@ -68,57 +68,92 @@ class PageControls extends StatelessWidget {
           showBorder: true,
           onTap: () async {
             final userMobileNo = await GetStorage().read('user_mobile_no');
+            final pageIndex = tripController.pageIndex.value;
+            final missingFields = <String>[];
 
-            if (isSecondPage) {
-              final hasAllFields =
-                  tripController.selectedBilledTo.value.isNotEmpty &&
-                  tripController.selectedBilledVehicle.value.isNotEmpty &&
-                  tripController.selectedDriver.value.isNotEmpty &&
-                  tripController.selectedSource.value.isNotEmpty &&
-                  tripController.selectedDestination.value.isNotEmpty &&
-                  tripController.tripType.value.isNotEmpty;
+            // Page 1 validations
+            if (pageIndex == 0) {
+              if (tripController.selectedBilledTo.value.isEmpty) {
+                missingFields.add('Billed To');
+              }
+              if (tripController.selectedBilledVehicle.value.isEmpty) {
+                missingFields.add('Billed Vehicle');
+              }
+              if (tripController.selectedDriver.value.isEmpty) {
+                missingFields.add('Driver Name');
+              }
 
-              if (hasAllFields) {
-                final trip = TripModel(
-                  billedTo: tripController.selectedBilledTo.value,
-                  billedVehicle: tripController.selectedBilledVehicle.value,
-                  driverName: tripController.selectedDriver.value,
-                  source: tripController.selectedSource.value,
-                  destination: tripController.selectedDestination.value,
-                  status: 'Open',
-                  tripType: tripController.tripType.value,
-                  completedAt: null,
-                  createdBy: userMobileNo.toString(),
-
-                  stages: [
-                    TripStageModel(name: 'Loading'),
-                    TripStageModel(name: 'Loaded'),
-                    TripStageModel(name: 'Dispatched'),
-                  ],
-                );
-
-                if (isDesktop) {
-                  tripController.createTrip(trip);
-                  sideBarController.menuOnTap(TRoutes.dashBoardScreen);
-                  tripController.changePage(0);
-                } else {
-                  tripController.createTrip(trip);
-                  Get.to(() => const DashboardScreen());
-                }
-              } else {
+              if (missingFields.isNotEmpty) {
                 Get.snackbar(
                   'Missing Information',
-                  'Please fill all required fields before saving.',
+                  'Please select: ${missingFields.join(', ')}',
                   snackPosition: SnackPosition.BOTTOM,
                   backgroundColor: Colors.red.shade100,
                   colorText: Colors.black,
+                  margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 );
+                return;
               }
-            } else {
-              // Move to next page
-              tripController.changePage(tripController.pageIndex.value + 1);
+
+              // All good → move to next page
+              tripController.changePage(1);
+              return;
+            }
+
+            // Page 2 validations
+            if (pageIndex == 1) {
+              if (tripController.selectedSource.value.isEmpty) {
+                missingFields.add('Source');
+              }
+              if (tripController.selectedDestination.value.isEmpty) {
+                missingFields.add('Destination');
+              }
+              if (tripController.tripType.value.isEmpty) {
+                missingFields.add('Trip Type');
+              }
+
+              if (missingFields.isNotEmpty) {
+                Get.snackbar(
+                  'Missing Information',
+                  'Please select: ${missingFields.join(', ')}',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red.shade100,
+                  colorText: Colors.black,
+                  margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                );
+                return;
+              }
+
+              // All good → Save
+              final trip = TripModel(
+                billedTo: tripController.selectedBilledTo.value,
+                billedVehicle: tripController.selectedBilledVehicle.value,
+                driverName: tripController.selectedDriver.value,
+                source: tripController.selectedSource.value,
+                destination: tripController.selectedDestination.value,
+                status: 'Open',
+                tripType: tripController.tripType.value,
+                completedAt: null,
+                createdBy: userMobileNo.toString(),
+                stages: [
+                  TripStageModel(name: 'Loading'),
+                  TripStageModel(name: 'Loaded'),
+                  TripStageModel(name: 'Dispatched'),
+                ],
+              );
+
+              tripController.createTrip(trip);
+
+              if (isDesktop) {
+                sideBarController.menuOnTap(TRoutes.dashBoardScreen);
+                tripController.changePage(0);
+              } else {
+
+                Get.to(() => const DashboardScreen());
+              }
             }
           },
+
           borderColor: TColors.grey.withOpacity(0.6),
           width: 124.w,
           height: 40.h,
@@ -127,7 +162,7 @@ class PageControls extends StatelessWidget {
             child: Text(
               style: TextStyle(
                 decoration: TextDecoration.none,
-                color: TColors.black,
+                color: TColors.white,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
               ),

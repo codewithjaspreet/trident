@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:trident/routes/routes.dart';
@@ -93,11 +94,12 @@ class AuthController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send OTP: $e');
       debugPrint('[Error] Failed to send OTP: $e');
+      Get.snackbar('OTP Error', e.toString(), backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
+
   }
 
   Future<void> verifyOtp() async {

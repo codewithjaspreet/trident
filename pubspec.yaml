@@ -42,6 +42,7 @@ dependencies:
   flutter_svg:
   url_strategy: ^0.2.0
   syncfusion_flutter_charts: ^29.2.5
+  flutter_otp_text_field: ^1.5.1+1
   universal_html: ^2.2.4
 
   # Icons
@@ -58,6 +59,7 @@ dependencies:
   cloud_firestore: ^5.6.7
   firebase_storage: ^12.4.5
   firebase_auth_platform_interface: ^7.7.0
+
 
 dev_dependencies:
   flutter_test:

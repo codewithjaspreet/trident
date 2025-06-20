@@ -1,5 +1,9 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:trident/features/auth/views/login/login.dart';
+import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:trident/routes/routes.dart';
 
 import '../features/auth/views/login/otp.dart';
@@ -15,6 +19,9 @@ class TAppRoutes {
     GetPage(
       name: TRoutes.dashBoardScreen,
       page: () => const DashboardScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => DashBoardController());
+      }),
     ),
 
     GetPage(

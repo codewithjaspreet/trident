@@ -112,8 +112,33 @@ class LoginMobileLayout extends StatelessWidget {
                             const SizedBox(height: TSizes.lg),
                             TRoundedContainer(
                               onTap: () async {
-                                authController.sendOtp(context);
+                                FocusScope.of(context).unfocus(); // hide keyboard
+                                final phone = authController.phoneController.text.trim();
+
+                                if (phone.isEmpty || phone.length < 10) {
+                                  Get.snackbar('Invalid Input', 'Please enter a valid mobile number');
+                                  return;
+                                }
+
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => const Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircularProgressIndicator(color: Colors.white),
+                                        SizedBox(height: 16),
+                                        Text('Logging in... Please wait', style: TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
+                                  ),
+                                );
+
+                                await authController.sendOtp(context);
+                                Navigator.of(context).pop(); // Close dialog after sending
                               },
+
                               margin: const EdgeInsets.symmetric(
                                   horizontal: TSizes.md),
                               backgroundColor: const Color(0xff1D61E7),
