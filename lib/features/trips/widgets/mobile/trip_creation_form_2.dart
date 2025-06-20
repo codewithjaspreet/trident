@@ -241,7 +241,7 @@ class TripCreationFormB extends StatelessWidget {
     );
   }
 
-  Widget _buildFullWidthDropd21own({
+  Widget _buildFullWidthDropdown({
     required Widget dropdown,
     required IconData icon,
     required Color iconColor,
