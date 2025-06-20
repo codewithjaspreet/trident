@@ -10,6 +10,7 @@ import '../../../utils/device/device_utility.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get firebaseAuth => _auth;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GetStorage _storage = GetStorage();
 
@@ -25,7 +26,6 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    handleAppLaunch(); // Step 1: handle app entry point
   }
 
   void handleAppLaunch() {
@@ -57,10 +57,14 @@ class AuthController extends GetxController {
     raw = raw.replaceAll(' ', '').trim();
     return raw.startsWith('+') ? raw : '+91$raw';
   }
-
   Future<void> sendOtp(BuildContext context) async {
     final phoneNumber = _formatPhoneNumber(phoneController.text);
-    isLoading.value = true;
+
+    // ✅ Show loading popup
+    Get.dialog(
+      const Center(child: CircularProgressIndicator(color: Colors.white)),
+      barrierDismissible: false,
+    );
 
     try {
       if (TDeviceUtils.isDesktopScreen(context)) {
@@ -71,6 +75,7 @@ class AuthController extends GetxController {
         );
         desktopConfirmationResult.value = confirmation;
         debugPrint('[Navigation] Redirecting to OTP Screen (desktop)');
+        Get.back(); // ✅ Close dialog before navigation
         Get.toNamed(TRoutes.otpScreen);
       } else {
         await _auth.verifyPhoneNumber(
@@ -81,11 +86,13 @@ class AuthController extends GetxController {
             await _handleUserPostVerification();
           },
           verificationFailed: (e) {
+            Get.back(); // ✅ Ensure dialog is closed on error
             Get.snackbar('Error', e.message ?? 'Verification failed');
           },
           codeSent: (verId, _) {
             verificationId.value = verId;
             debugPrint('[Navigation] Redirecting to OTP Screen (mobile)');
+            Get.back(); // ✅ Close dialog before navigating
             Get.toNamed(TRoutes.otpScreen);
           },
           codeAutoRetrievalTimeout: (verId) {
@@ -94,13 +101,19 @@ class AuthController extends GetxController {
         );
       }
     } catch (e) {
+      Get.back(); // ✅ Always close dialog in error
       debugPrint('[Error] Failed to send OTP: $e');
-      Get.snackbar('OTP Error', e.toString(), backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'OTP Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
-
   }
+
 
   Future<void> verifyOtp() async {
     final smsCode = otpController.text.trim();
@@ -164,7 +177,7 @@ class AuthController extends GetxController {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('[Navigation] Redirecting to Dashboard from _handleUserPostVerification');
-      Get.toNamed(TRoutes.dashBoardScreen);
+      Get.offAllNamed(TRoutes.dashBoardScreen);
     });
   }
   Future<void> logout() async {

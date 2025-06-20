@@ -37,19 +37,143 @@ class PageControls extends StatelessWidget {
       children: [
         /// Left Button: Cancel / Previous (Mobile only or step 1 on mobile)
         if (!isDesktop)
-          TRoundedContainer(
-            showBorder: true,
-            onTap: () {
-              tripController.pageIndex.value > 0
-                  ? tripController
-                      .changePage(tripController.pageIndex.value - 1)
-                  : Get.back();
-            },
-            borderColor: TColors.grey.withOpacity(0.6),
-            width: 124.w,
-            height: 40.h,
-            radius: 8.r,
+          Container(
+            width: 100.w,
+            height: 50.h,
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.sp),
+              border: Border.all(
+                color: TColors.grey.withOpacity(0.6),
+              ),
+            ),
+            margin: EdgeInsets.only(left: 16.w),
             child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  tripController.pageIndex.value > 0
+                      ? tripController
+                          .changePage(tripController.pageIndex.value - 1)
+                      : Get.back();
+                },
+                child: Text(
+                  style: TextStyle(
+                    decoration: TextDecoration.none,
+                    color: TColors.black,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  tripController.pageIndex.value == 1 ? 'Previous' : 'Cancel',
+                ),
+              ),
+            ),
+          ),
+
+        /// Right Button: Next / Save
+        ///
+        ///
+        ///
+        Container(
+          width: 100.w,
+          height: 50.h,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.sp),
+            border: Border.all(
+              color: TColors.grey.withOpacity(0.6),
+            ),
+          ),
+          margin: EdgeInsets.only(left: 16.w),
+          child: Center(
+            child: GestureDetector(
+              onTap: () async {
+                final userMobileNo = await GetStorage().read('user_mobile_no');
+                final pageIndex = tripController.pageIndex.value;
+                final missingFields = <String>[];
+
+// Page 1 validations
+                if (pageIndex == 0) {
+                  if (tripController.selectedBilledTo.value.isEmpty) {
+                    missingFields.add('Billed To');
+                  }
+                  if (tripController.selectedBilledVehicle.value.isEmpty) {
+                    missingFields.add('Billed Vehicle');
+                  }
+                  if (tripController.selectedDriver.value.isEmpty) {
+                    missingFields.add('Driver Name');
+                  }
+
+                  if (missingFields.isNotEmpty) {
+                    Get.snackbar(
+                      'Missing Information',
+                      'Please select: ${missingFields.join(', ')}',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red.shade100,
+                      colorText: Colors.black,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 16.w, vertical: 12.h),
+                    );
+                    return;
+                  }
+
+// All good → move to next page
+                  tripController.changePage(1);
+                  return;
+                }
+
+// Page 2 validations
+                if (pageIndex == 1) {
+                  if (tripController.selectedSource.value.isEmpty) {
+                    missingFields.add('Source');
+                  }
+                  if (tripController.selectedDestination.value.isEmpty) {
+                    missingFields.add('Destination');
+                  }
+                  if (tripController.tripType.value.isEmpty) {
+                    missingFields.add('Trip Type');
+                  }
+
+                  if (missingFields.isNotEmpty) {
+                    Get.snackbar(
+                      'Missing Information',
+                      'Please select: ${missingFields.join(', ')}',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red.shade100,
+                      colorText: Colors.black,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 16.w, vertical: 12.h),
+                    );
+                    return;
+                  }
+
+// All good → Save
+                  final trip = TripModel(
+                    billedTo: tripController.selectedBilledTo.value,
+                    billedVehicle: tripController.selectedBilledVehicle.value,
+                    driverName: tripController.selectedDriver.value,
+                    source: tripController.selectedSource.value,
+                    destination: tripController.selectedDestination.value,
+                    status: 'Open',
+                    tripType: tripController.tripType.value,
+                    completedAt: null,
+                    createdBy: userMobileNo.toString(),
+                    stages: [
+                      TripStageModel(name: 'Loading'),
+                      TripStageModel(name: 'Loaded'),
+                      TripStageModel(name: 'Dispatched'),
+                    ],
+                  );
+
+                  tripController.createTrip(trip);
+
+                  if (isDesktop) {
+                    sideBarController.menuOnTap(TRoutes.dashBoardScreen);
+                    tripController.changePage(0);
+                  } else {
+                    Get.to(() => const DashboardScreen());
+                  }
+                }
+              },
               child: Text(
                 style: TextStyle(
                   decoration: TextDecoration.none,
@@ -57,116 +181,8 @@ class PageControls extends StatelessWidget {
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                 ),
-                tripController.pageIndex.value == 1 ? 'Previous' : 'Cancel',
+                isSecondPage ? 'Save' : 'Next',
               ),
-            ),
-          ),
-
-        /// Right Button: Next / Save
-        TRoundedContainer(
-          backgroundColor: TColors.bgPrimary,
-          showBorder: true,
-          onTap: () async {
-            final userMobileNo = await GetStorage().read('user_mobile_no');
-            final pageIndex = tripController.pageIndex.value;
-            final missingFields = <String>[];
-
-            // Page 1 validations
-            if (pageIndex == 0) {
-              if (tripController.selectedBilledTo.value.isEmpty) {
-                missingFields.add('Billed To');
-              }
-              if (tripController.selectedBilledVehicle.value.isEmpty) {
-                missingFields.add('Billed Vehicle');
-              }
-              if (tripController.selectedDriver.value.isEmpty) {
-                missingFields.add('Driver Name');
-              }
-
-              if (missingFields.isNotEmpty) {
-                Get.snackbar(
-                  'Missing Information',
-                  'Please select: ${missingFields.join(', ')}',
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.red.shade100,
-                  colorText: Colors.black,
-                  margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                );
-                return;
-              }
-
-              // All good → move to next page
-              tripController.changePage(1);
-              return;
-            }
-
-            // Page 2 validations
-            if (pageIndex == 1) {
-              if (tripController.selectedSource.value.isEmpty) {
-                missingFields.add('Source');
-              }
-              if (tripController.selectedDestination.value.isEmpty) {
-                missingFields.add('Destination');
-              }
-              if (tripController.tripType.value.isEmpty) {
-                missingFields.add('Trip Type');
-              }
-
-              if (missingFields.isNotEmpty) {
-                Get.snackbar(
-                  'Missing Information',
-                  'Please select: ${missingFields.join(', ')}',
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.red.shade100,
-                  colorText: Colors.black,
-                  margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                );
-                return;
-              }
-
-              // All good → Save
-              final trip = TripModel(
-                billedTo: tripController.selectedBilledTo.value,
-                billedVehicle: tripController.selectedBilledVehicle.value,
-                driverName: tripController.selectedDriver.value,
-                source: tripController.selectedSource.value,
-                destination: tripController.selectedDestination.value,
-                status: 'Open',
-                tripType: tripController.tripType.value,
-                completedAt: null,
-                createdBy: userMobileNo.toString(),
-                stages: [
-                  TripStageModel(name: 'Loading'),
-                  TripStageModel(name: 'Loaded'),
-                  TripStageModel(name: 'Dispatched'),
-                ],
-              );
-
-              tripController.createTrip(trip);
-
-              if (isDesktop) {
-                sideBarController.menuOnTap(TRoutes.dashBoardScreen);
-                tripController.changePage(0);
-              } else {
-
-                Get.to(() => const DashboardScreen());
-              }
-            }
-          },
-
-          borderColor: TColors.grey.withOpacity(0.6),
-          width: 124.w,
-          height: 40.h,
-          radius: 8.r,
-          child: Center(
-            child: Text(
-              style: TextStyle(
-                decoration: TextDecoration.none,
-                color: TColors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-              ),
-              isSecondPage ? 'Save' : 'Next',
             ),
           ),
         ),
