@@ -173,7 +173,14 @@ class TripController extends GetxController {
 
   Future<void> createTrip(TripModel trip) async {
     await FirebaseFirestore.instance.collection('trips').add(trip.toMap());
-    print("Trip created");
+    Get.snackbar(
+      "Done",
+      "Trip added Successfully!",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red.shade100,
+      colorText: Colors.red.shade800,
+      margin: EdgeInsets.all(16.w),
+    );
   }
 
   void updateTripDate(DateTime date) {

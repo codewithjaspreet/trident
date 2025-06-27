@@ -60,7 +60,7 @@ class PageControls extends StatelessWidget {
                   style: TextStyle(
                     decoration: TextDecoration.none,
                     color: TColors.black,
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                   tripController.pageIndex.value == 1 ? 'Previous' : 'Cancel',
@@ -78,6 +78,7 @@ class PageControls extends StatelessWidget {
           height: 50.h,
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
+            color:TColors.bgPrimary,
             borderRadius: BorderRadius.circular(12.sp),
             border: Border.all(
               color: TColors.grey.withOpacity(0.6),
@@ -177,8 +178,8 @@ class PageControls extends StatelessWidget {
               child: Text(
                 style: TextStyle(
                   decoration: TextDecoration.none,
-                  color: TColors.black,
-                  fontSize: 16.sp,
+                  color: TColors.white,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
                 isSecondPage ? 'Save' : 'Next',
