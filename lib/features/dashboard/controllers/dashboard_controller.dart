@@ -58,6 +58,7 @@ class DashBoardController extends GetxController {
 
   Future<void> getAllAdminCreatedTrips() async {
     final rawMobile = loggedInUser.value.userMobileNumber.trim();
+
     final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
 
     try {
@@ -66,9 +67,18 @@ class DashBoardController extends GetxController {
           .where('created_by', isEqualTo: formattedMobile)
           .get();
 
-      allCreatedTrips.value =
-          snapshot.docs.map((doc) => TripModel.fromJson(doc.data())).toList();
-    } catch (_) {}
+      allCreatedTrips.value = snapshot.docs
+          .map((doc) => TripModel.fromJson(doc.data()))
+          .toList()
+        ..sort((a, b) {
+          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bDate.compareTo(aDate);
+        });
+
+    } catch (e) {
+      print('Error fetching admin trips: $e');
+    }
   }
 
   Future<void> getAllDriverAssignedTrips() async {
@@ -95,9 +105,19 @@ class DashBoardController extends GetxController {
           .where('driver_name', isEqualTo: driverName)
           .get();
 
+      // allCreatedTrips.value = tripSnapshot.docs
+      //     .map((doc) => TripModel.fromJson(doc.data()))
+      //     .toList();
+
       allCreatedTrips.value = tripSnapshot.docs
           .map((doc) => TripModel.fromJson(doc.data()))
-          .toList();
+          .toList()
+        ..sort((a, b) {
+          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bDate.compareTo(aDate); // latest first
+        });
+
     } catch (_) {}
   }
 

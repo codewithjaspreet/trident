@@ -104,10 +104,9 @@ class AddTrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(
-          const AddTripMobile(),
-          transition: Transition.rightToLeft,
-        );
+        Get.to(() => const AddTripMobile(),
+            transition: Transition.rightToLeftWithFade,
+            duration: const Duration(milliseconds: 500));
       },
       child: Container(
         margin: const EdgeInsets.all(16),

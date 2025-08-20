@@ -6,6 +6,7 @@ import 'package:trident/features/trips/controllers/trip_controller.dart';
 import 'package:trident/utils/constants/colors.dart';
 import 'mobile/trip_creation_form_1.dart';
 import 'mobile/trip_creation_form_2.dart';
+import 'mobile/trip_creation_form_3.dart';
 
 class AddTripMobile extends StatelessWidget {
   const AddTripMobile({super.key});
@@ -24,6 +25,11 @@ class AddTripMobile extends StatelessWidget {
             sideBarController: sideBarController,
           ),
           TripCreationFormB(
+            tripController: tripController,
+            sideBarController: sideBarController,
+          ),
+
+          TripCreationFormC(
             tripController: tripController,
             sideBarController: sideBarController,
           ),
