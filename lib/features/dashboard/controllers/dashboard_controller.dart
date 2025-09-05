@@ -39,9 +39,15 @@ class DashBoardController extends GetxController {
 
   Future<void> _initializeDashboard() async {
     await getUserRole();
+
+    print('Logged in user role: ${loggedInUser.value.userRole}');
     if (loggedInUser.value.userRole == 'driver') {
       await getAllDriverAssignedTrips();
-    } else {
+    }
+    else if(loggedInUser.value.userRole == 'Trip Manager') {
+      await getAllTripManagerReviewTrips();
+    }
+    else {
       await getAllAdminCreatedTrips();
     }
   }
@@ -119,6 +125,41 @@ class DashBoardController extends GetxController {
         });
 
     } catch (_) {}
+  }
+
+
+  Future<void> getAllTripManagerReviewTrips() async {
+
+    try {
+
+      print("Fetching trip manager review trips...");
+
+      // fetch all the trips for the trip manager for which in_review is true
+      final snapshot = await _fireStore
+          .collection('trips')
+          .where('in_review', isEqualTo: true)
+          .get();
+
+      print("Fetched ${snapshot.docs.length} trips for review.");
+
+      allCreatedTrips.value = snapshot.docs
+          .map((doc) => TripModel.fromJson(doc.data()))
+          .toList()
+        ..sort((a, b) {
+          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bDate.compareTo(aDate); // latest first
+        });
+
+      print("Total trips in review: ${allCreatedTrips.length}");
+
+
+
+    }
+    catch(e) {
+      print('Error fetching trip manager review trips: $e');
+    }
+
   }
 
   String _normalizeMobile(String number) {

@@ -190,6 +190,10 @@ class PageControls extends StatelessWidget {
           missingFields.add('Billed Vehicle');
         }
 
+        if (tripController.selectedTripAuthorizer.value.isEmpty) {
+          missingFields.add('Select Authorizer');
+        }
+
 
         _showValidationError(missingFields);
         return;
@@ -297,7 +301,8 @@ class PageControls extends StatelessWidget {
           createdBy: userMobileNo?.toString() ?? '',
           consignor: tripController.selectedConsignor.value,
           stages: stageModels,
-          consignee: tripController.selectedConsignee.value.value,
+          consignee: tripController.selectedConsignee.value,
+          selectedTripAuthorizer: tripController.selectedTripAuthorizer.value
         );
 
         // Save the trip

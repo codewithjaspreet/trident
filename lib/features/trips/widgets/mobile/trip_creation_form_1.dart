@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -48,8 +47,7 @@ class TripCreationFormA extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: Row(
                   children: [
-                    if (!isDesktop)
-                      _buildBackButton(),
+                    if (!isDesktop) _buildBackButton(),
                     if (!isDesktop) SizedBox(width: 12.w),
 
                     // Title
@@ -101,13 +99,15 @@ class TripCreationFormA extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 /// Trip Date
-                                _buildSectionHeader("Trip Date", Icons.calendar_today_outlined),
+                                _buildSectionHeader(
+                                    "Trip Date", Icons.calendar_today_outlined),
                                 SizedBox(height: 12.h),
                                 TripDatePickerField(),
                                 SizedBox(height: 24.h),
 
                                 /// Billing Information
-                                _buildSectionHeader("Billing Information", Icons.receipt_long_outlined),
+                                _buildSectionHeader("Billing Information",
+                                    Icons.receipt_long_outlined),
                                 SizedBox(height: 12.h),
 
                                 if (isDesktop)
@@ -115,7 +115,8 @@ class TripCreationFormA extends StatelessWidget {
                                     children: [
                                       Expanded(child: _buildBilledToDropdown()),
                                       SizedBox(width: 16.w),
-                                      Expanded(child: _buildBilledVehicleDropdown()),
+                                      Expanded(
+                                          child: _buildBilledVehicleDropdown()),
                                     ],
                                   )
                                 else
@@ -129,28 +130,22 @@ class TripCreationFormA extends StatelessWidget {
 
                                 SizedBox(height: 16.h),
 
-                                // /// Consignor Dropdown (filtered by BilledTo)
-                                // Obx(() {
-                                //   final billedTo = tripController.selectedBilledTo.value;
-                                //   final filteredConsignors = tripController.allConsigneesWithRefs
-                                //       .where((c) => c['consignor'] == billedTo)
-                                //       .map((c) => c['consignor'] as String)
-                                //       .toSet()
-                                //       .toList();
-                                //
-                                //   return _buildModernDropdown(
-                                //     "Consignor",
-                                //     filteredConsignors.isEmpty
-                                //         ? "No consignors available"
-                                //         : "Select consignor",
-                                //     filteredConsignors,
-                                //         (val) {
-                                //       if (val != null) {
-                                //         tripController.selectedConsignor.value = val;
-                                //       }
-                                //     },
-                                //   );
-                                // }),
+                                /// Consignor Dropdown (filtered by BilledTo)
+                                Obx(() {
+                                  return _buildModernDropdown(
+                                    "Select Authorizer",
+                                    tripController.allTridentAuthorizers.isEmpty
+                                        ? "No Authorizers available"
+                                        : "Select Authorizer",
+                                    tripController.allTridentAuthorizers,
+                                    (val) {
+                                      if (val != null) {
+                                        tripController
+                                            .selectedTripAuthorizer.value = val;
+                                      }
+                                    },
+                                  );
+                                }),
 
                                 SizedBox(height: 24.h),
                               ],
@@ -175,67 +170,74 @@ class TripCreationFormA extends StatelessWidget {
 
   /// --- UI Helpers ---
   Widget _buildBackButton() => Container(
-    width: 36.w,
-    height: 36.w,
-    decoration: BoxDecoration(
-      color: const Color(0xfff8f9ff),
-      borderRadius: BorderRadius.circular(10.r),
-      border: Border.all(color: Colors.grey.shade200, width: 1),
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10.r),
-        onTap: Get.back,
-        child: Center(
-          child: Icon(Icons.arrow_back_ios_new, size: 16.sp, color: Colors.grey.shade700),
+        width: 36.w,
+        height: 36.w,
+        decoration: BoxDecoration(
+          color: const Color(0xfff8f9ff),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: Colors.grey.shade200, width: 1),
         ),
-      ),
-    ),
-  );
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10.r),
+            onTap: Get.back,
+            child: Center(
+              child: Icon(Icons.arrow_back_ios_new,
+                  size: 16.sp, color: Colors.grey.shade700),
+            ),
+          ),
+        ),
+      );
 
   Widget _buildProgress(String text) => Container(
-    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-    decoration: BoxDecoration(
-      color: bgPrimary.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(16.r),
-    ),
-    child: Text(text,
-        style: GoogleFonts.outfit(
-          fontSize: 11.sp,
-          fontWeight: FontWeight.w600,
-          color: bgPrimary,
-        )),
-  );
-
-  Widget _buildSectionHeader(String title, IconData icon) => Row(
-    children: [
-      Container(
-        width: 28.w,
-        height: 28.w,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
         decoration: BoxDecoration(
           color: bgPrimary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular(16.r),
         ),
-        child: Icon(icon, size: 16.sp, color: bgPrimary),
-      ),
-      SizedBox(width: 10.w),
-      Text(title,
-          style: GoogleFonts.outfit(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xff1a1a2e),
-          )),
-    ],
-  );
+        child: Text(text,
+            style: GoogleFonts.outfit(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: bgPrimary,
+            )),
+      );
+
+  Widget _buildSectionHeader(String title, IconData icon) => Row(
+        children: [
+          Container(
+            width: 28.w,
+            height: 28.w,
+            decoration: BoxDecoration(
+              color: bgPrimary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Icon(icon, size: 16.sp, color: bgPrimary),
+          ),
+          SizedBox(width: 10.w),
+          Text(title,
+              style: GoogleFonts.outfit(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xff1a1a2e),
+              )),
+        ],
+      );
 
   BoxDecoration _cardDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(16.r),
-    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 3))],
-  );
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 15,
+              offset: const Offset(0, 3))
+        ],
+      );
 
-  Widget _buildModernDropdown(String title, String hintText, List<String> items, Function(String?) onChanged) {
+  Widget _buildModernDropdown(String title, String hintText, List<String> items,
+      Function(String?) onChanged) {
     return TDropDown(
       items: items,
       hintText: hintText,
@@ -245,7 +247,8 @@ class TripCreationFormA extends StatelessWidget {
   }
 
   Widget _buildBilledToDropdown() {
-    return _buildModernDropdown("Billed To", "Select billing entity", tripController.allVendors, (val) {
+    return _buildModernDropdown(
+        "Billed To", "Select billing entity", tripController.allVendors, (val) {
       if (val != null) {
         tripController.selectedBilledTo.value = val;
         tripController.selectedConsignor.value = val;
@@ -255,25 +258,33 @@ class TripCreationFormA extends StatelessWidget {
   }
 
   Widget _buildBilledVehicleDropdown() {
-    return _buildModernDropdown("Billed Vehicle", "Select vehicle", tripController.allVehicles, (val) {
+    return _buildModernDropdown(
+        "Billed Vehicle", "Select vehicle", tripController.allVehicles, (val) {
       if (val != null) tripController.selectedBilledVehicle.value = val;
     });
   }
 
   Widget _buildBottomNav() => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 15, offset: const Offset(0, -3))],
-    ),
-    child: SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-        child: SizedBox(
-          width: double.infinity,
-          height: 48.h,
-          child: PageControls(tripController: tripController, sideBarController: sideBarController),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 15,
+                offset: const Offset(0, -3))
+          ],
         ),
-      ),
-    ),
-  );
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48.h,
+              child: PageControls(
+                  tripController: tripController,
+                  sideBarController: sideBarController),
+            ),
+          ),
+        ),
+      );
 }

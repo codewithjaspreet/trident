@@ -72,7 +72,7 @@ class TripCreationFormB extends StatelessWidget {
                                     .toList();
 
                                 // Get current selected consignee name by matching reference
-                                final selectedConsigneeRef = tripController.selectedConsignee.value?.value;
+                                final selectedConsigneeRef = tripController.selectedConsignee.value;
                                 final selectedConsigneeName = selectedConsigneeRef != null
                                     ? consigneeList.firstWhere(
                                       (c) => c['reference'] == selectedConsigneeRef,
@@ -91,7 +91,7 @@ class TripCreationFormB extends StatelessWidget {
                                       final consigneeData = consigneeList.firstWhere((c) => c['consignee'] == val);
 
                                       // ✅ Store DocumentReference in controller
-                                      tripController.selectedConsignee.value = Rxn<DocumentReference>(consigneeData['reference'] as DocumentReference);
+                                      tripController.selectedConsignee = Rxn<DocumentReference>(consigneeData['reference'] as DocumentReference);
 
                                       // ✅ Optionally set destination
                                       tripController.selectedDestination.value = consigneeData['area'] ?? '';

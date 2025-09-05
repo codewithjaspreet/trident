@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:trident/features/dashboard/widgets/mobile/driver_assigned_trip_card.dart';
+import 'package:trident/features/dashboard/widgets/mobile/trip_manager_review_card.dart';
 import 'package:trident/features/dashboard/widgets/mobile/trip_stat_item.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../trips/widgets/add_trip_mobile.dart';
@@ -40,8 +41,8 @@ class DashboardMobileLayout extends StatelessWidget {
                   children: [
                     Text(
                       dashBoardController.loggedInUser.value.userRole == 'admin'
-                          ? 'All Trips'
-                          : 'Assigned Trips',
+                          ? 'All Trips' : dashBoardController.loggedInUser.value.userRole == 'driver' ?
+                           'Assigned Trips' : 'In Reviewing',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     IconButton(
@@ -49,10 +50,15 @@ class DashboardMobileLayout extends StatelessWidget {
                       onPressed: () async {
                         dashBoardController.isLoading.value = true;
                         final role = await GetStorage().read('user_role');
+                        print('User role: $role');
                         if (role == 'admin') {
                           await dashBoardController.getAllAdminCreatedTrips();
-                        } else {
+                        }
+                        else if(role == 'driver') {
                           await dashBoardController.getAllDriverAssignedTrips();
+                        }
+                        else {
+                          await dashBoardController.getAllTripManagerReviewTrips();
                         }
                         dashBoardController.isLoading.value = false;
                       },
@@ -85,8 +91,8 @@ class DashboardMobileLayout extends StatelessWidget {
                     return dashBoardController
                         .loggedInUser.value.userRole ==
                         'admin'
-                        ? TripCard(trip: trip)
-                        : DriverAssignedTripCard(trip: trip);
+                        ? TripCard(trip: trip) : dashBoardController.loggedInUser.value.userRole == 'driver' ?
+                         DriverAssignedTripCard(trip: trip) : TripManagerReviewCard(trip: trip);
                   },
                 ),
             ],
