@@ -109,11 +109,10 @@ class DashBoardController extends GetxController {
       final tripSnapshot = await _fireStore
           .collection('trips')
           .where('driver_name', isEqualTo: driverName)
+          .where('in_review', isEqualTo: false)
           .get();
 
-      // allCreatedTrips.value = tripSnapshot.docs
-      //     .map((doc) => TripModel.fromJson(doc.data()))
-      //     .toList();
+
 
       allCreatedTrips.value = tripSnapshot.docs
           .map((doc) => TripModel.fromJson(doc.data()))

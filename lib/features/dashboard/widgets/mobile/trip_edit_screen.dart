@@ -721,223 +721,185 @@ class TripEditScreen extends StatelessWidget {
     return DateFormat('MMM dd, yyyy').format(date);
   }
 
-  void _showApproveDropdown(TripController controller, BuildContext context) {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
+  }
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      barrierColor: Colors.black.withOpacity(0.3),
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, anim1, anim2) {
-        return Container();
-      },
-      transitionBuilder: (context, anim1, anim2, child) {
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, -0.3),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: anim1,
-            curve: Curves.elasticOut,
-          )),
-          child: FadeTransition(
-            opacity: anim1,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                margin: EdgeInsets.only(
-                  top: offset.dy + renderBox.size.height + 8.h,
-                  left: 20.w,
-                  right: 20.w,
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                          spreadRadius: 0,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Header with accent line
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(20.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFF16A34A).withOpacity(0.1),
-                                Colors.transparent,
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.r),
-                              topRight: Radius.circular(16.r),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(8.w),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF16A34A).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.check_circle_outline,
-                                      color: const Color(0xFF16A34A),
-                                      size: 20.w,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Text(
-                                    'Approve Trip',
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.grey[900],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                'Confirm trip approval',
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[500],
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
 
-                        // Content
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'This will permanently approve the trip request. The traveler will be notified immediately.',
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  height: 1.5,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              SizedBox(height: 24.h),
-
-                              // Action buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () => Navigator.of(context).pop(),
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          side: BorderSide(
-                                            color: Colors.grey[300]!,
-                                            width: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'Cancel',
-                                        style: TextStyle(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    flex: 2,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        controller.approveTrip();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF16A34A),
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12.r),
-                                        ),
-                                      ).copyWith(
-                                        overlayColor: MaterialStateProperty.all(
-                                          Colors.white.withOpacity(0.1),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.check,
-                                            size: 16.w,
-                                          ),
-                                          SizedBox(width: 6.w),
-                                          Text(
-                                            'Approve Trip',
-                                            style: TextStyle(
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+void _showApproveDropdown(TripController controller, BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        elevation: 8,
+        child: Container(
+          width: double.infinity,
+          constraints: BoxConstraints(maxWidth: 400.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with accent line
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(20.w),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF16A34A).withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
                   ),
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF16A34A).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Icon(
+                            Icons.check_circle_outline,
+                            color: const Color(0xFF16A34A),
+                            size: 20.w,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Text(
+                          'Approve Trip',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey[900],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(
+                      'Confirm trip approval',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[500],
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+
+              // Content
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'This will permanently approve the trip request. The traveler will be notified immediately.',
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        height: 1.5,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                                side: BorderSide(
+                                  color: Colors.grey[300]!,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              controller.approveTrip();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF16A34A),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ).copyWith(
+                              overlayColor: MaterialStateProperty.all(
+                                Colors.white.withOpacity(0.1),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check,
+                                  size: 16.w,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  'Approve Trip',
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }}
+        ),
+      );
+    },
+  );
+}
 
 class _DetailItem {
   final String label;

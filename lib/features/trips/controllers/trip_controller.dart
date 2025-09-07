@@ -1337,16 +1337,12 @@ class TripController extends GetxController {
 
       final approvalData = {
         'in_review': false,
-        'is_approved': true,
-        'approved_by': userMobile ?? 'Unknown',
-        'approved_at': FieldValue.serverTimestamp(),
-        'trip_status': 'approved',
       };
 
       await _fireStore.collection('trips').doc(tripId).update(approvalData);
 
       _showSuccessMessage('Success', 'Trip approved successfully');
-      Get.to(() => DashboardMobileLayout());
+      Get.to(() => const DashboardScreen());
 
     } catch (e) {
       _handleError('Failed to approve trip', e);
@@ -1371,40 +1367,6 @@ class TripController extends GetxController {
     } catch (e) {
       _handleError('Failed to get trip ID', e);
       return null;
-    }
-  }
-  /// Approve trip by created at timestamp (for direct approval from card)
-  Future<void> approveTripByCreatedAt(DateTime createdAt) async {
-    try {
-      isApproving.value = true;
-
-      final snapshot = await _fireStore
-          .collection('trips')
-          .where('created_at', isEqualTo: Timestamp.fromDate(createdAt))
-          .limit(1)
-          .get();
-
-      if (snapshot.docs.isEmpty) {
-        _showErrorMessage("Trip Not Found", "No trip found with the given timestamp");
-        return;
-      }
-
-      final tripDoc = snapshot.docs.first;
-      final userMobile = await _storage.read('user_mobile_no');
-
-      await _fireStore.collection('trips').doc(tripDoc.id).update({
-        'in_review': false,
-        'is_approved': true,
-        'approved_by': userMobile ?? 'Unknown',
-        'approved_at': FieldValue.serverTimestamp(),
-        'trip_status': 'approved',
-      });
-
-      _showSuccessMessage("Trip Approved", "Trip approved successfully!");
-    } catch (e) {
-      _handleError('Failed to approve trip', e);
-    } finally {
-      isApproving.value = false;
     }
   }
 
