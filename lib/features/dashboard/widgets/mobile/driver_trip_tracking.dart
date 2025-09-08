@@ -2161,7 +2161,7 @@ class TripTimelineScreen extends StatelessWidget {
                                 'Cancel'.tr,
                                 style: TextStyle(
                                   color: const Color(0xFF64748B),
-                                  fontSize: 15.sp,
+                                  fontSize: 13.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -2203,12 +2203,11 @@ class TripTimelineScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.flag_rounded, size: 18.sp),
-                                  SizedBox(width: 6.w),
+
                                   Text(
                                     'Complete Trip'.tr,
                                     style: TextStyle(
-                                      fontSize: 15.sp,
+                                      fontSize: 13.sp,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.3,
                                     ),
