@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/data/models/trip_model.dart';
 import 'package:trident/features/dashboard/views/dashboard.dart';
+import 'package:trident/features/dashboard/views/navigation_bar.dart';
 import 'package:trident/features/trips/controllers/trip_controller.dart';
 import 'package:trident/routes/routes.dart';
 import 'package:trident/utils/device/device_utility.dart';
@@ -190,9 +191,7 @@ class PageControls extends StatelessWidget {
           missingFields.add('Billed Vehicle');
         }
 
-        if (tripController.selectedTripAuthorizer.value.isEmpty) {
-          missingFields.add('Select Authorizer');
-        }
+
 
 
         _showValidationError(missingFields);
@@ -302,7 +301,6 @@ class PageControls extends StatelessWidget {
           consignor: tripController.selectedConsignor.value,
           stages: stageModels,
           consignee: tripController.selectedConsignee.value,
-          selectedTripAuthorizer: tripController.selectedTripAuthorizer.value
         );
 
         // Save the trip
@@ -330,7 +328,7 @@ class PageControls extends StatelessWidget {
           sideBarController.menuOnTap(TRoutes.dashBoardScreen);
           tripController.changePage(0);
         } else {
-          Get.off(() => const DashboardScreen());
+          Get.off(() =>  TridentNavigationBar());
           tripController.changePage(0);
         }
 

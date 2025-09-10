@@ -131,21 +131,21 @@ class TripCreationFormA extends StatelessWidget {
                                 SizedBox(height: 16.h),
 
                                 /// Consignor Dropdown (filtered by BilledTo)
-                                Obx(() {
-                                  return _buildModernDropdown(
-                                    "Select Authorizer",
-                                    tripController.allTridentAuthorizers.isEmpty
-                                        ? "No Authorizers available"
-                                        : "Select Authorizer",
-                                    tripController.allTridentAuthorizers,
-                                    (val) {
-                                      if (val != null) {
-                                        tripController
-                                            .selectedTripAuthorizer.value = val;
-                                      }
-                                    },
-                                  );
-                                }),
+                                // Obx(() {
+                                //   return _buildModernDropdown(
+                                //     "Select Authorizer",
+                                //     tripController.allTridentAuthorizers.isEmpty
+                                //         ? "No Authorizers available"
+                                //         : "Select Authorizer",
+                                //     tripController.allTridentAuthorizers,
+                                //     (val) {
+                                //       if (val != null) {
+                                //         tripController
+                                //             .selectedTripAuthorizer.value = val;
+                                //       }
+                                //     },
+                                //   );
+                                // }),
 
                                 SizedBox(height: 24.h),
                               ],

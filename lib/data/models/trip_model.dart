@@ -10,7 +10,6 @@ class TripModel {
   String tripType;
   String status;
   String createdBy;
-  String selectedTripAuthorizer;
   String? currentStage;
   String? consignor; // ✅ STRING, not reference
   DocumentReference? consignee; // ✅ This is a reference
@@ -27,7 +26,6 @@ class TripModel {
     required this.destination,
     required this.tripType,
     required this.createdBy,
-    required this.selectedTripAuthorizer,
     required this.tripDate,
     this.status = 'pending',
     this.currentStage,
@@ -43,7 +41,6 @@ class TripModel {
       tripDate: (json['trip_date'] as Timestamp?)?.toDate(),
       billedTo: json['billed_to'] ?? '',
       billedVehicle: json['billed_vehicle'] ?? '',
-      selectedTripAuthorizer: json['selected_trip_authorizer'] ?? '',
       driverName: json['driver_name'] ?? '',
       source: json['sources'] ?? '',
       destination: json['destination'] ?? '',
@@ -70,7 +67,6 @@ class TripModel {
       'destination': destination,
       'trip_date': tripDate,
       'trip_type': tripType,
-      'selected_trip_authorizer': selectedTripAuthorizer,
       'trip_status': status,
       'created_by': createdBy,
       'consignee': consignee,

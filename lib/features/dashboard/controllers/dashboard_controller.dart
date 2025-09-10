@@ -8,6 +8,7 @@ import 'package:trident/routes/routes.dart';
 
 class DashBoardController extends GetxController {
   final allCreatedTrips = <TripModel>[].obs;
+  final allReviewTrips = <TripModel>[].obs;
 
   final dieselPriceController = TextEditingController();
   final totalTripChargesAllocatedController = TextEditingController();
@@ -44,11 +45,9 @@ class DashBoardController extends GetxController {
     if (loggedInUser.value.userRole == 'driver') {
       await getAllDriverAssignedTrips();
     }
-    else if(loggedInUser.value.userRole == 'Trip Manager') {
-      await getAllTripManagerReviewTrips();
-    }
     else {
-      await getAllAdminCreatedTrips();
+
+      await getAllCreatedTrips();
     }
   }
 
@@ -62,7 +61,7 @@ class DashBoardController extends GetxController {
     Get.offNamed(TRoutes.addTripsScreen);
   }
 
-  Future<void> getAllAdminCreatedTrips() async {
+  Future<void> getAllCreatedTrips() async {
     final rawMobile = loggedInUser.value.userMobileNumber.trim();
 
     final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
@@ -70,7 +69,7 @@ class DashBoardController extends GetxController {
     try {
       final snapshot = await _fireStore
           .collection('trips')
-          .where('created_by', isEqualTo: formattedMobile)
+          .where('created_by', isEqualTo: formattedMobile )
           .get();
 
       allCreatedTrips.value = snapshot.docs
@@ -84,6 +83,37 @@ class DashBoardController extends GetxController {
 
     } catch (e) {
       print('Error fetching admin trips: $e');
+    }
+  }
+
+  Future<void> getAllReviewingTrips() async {
+    final rawMobile = loggedInUser.value.userMobileNumber.trim();
+    final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
+
+    try {
+      // First, get all trips that are in review
+      final snapshot = await _fireStore
+          .collection('trips')
+          .where('in_review', isEqualTo: true)
+          .get();
+
+      // Filter out the current user's trips in memory
+      allReviewTrips.value = snapshot.docs
+          .where((doc) {
+        final data = doc.data();
+        return data['created_by'] != formattedMobile;
+      })
+          .map((doc) => TripModel.fromJson(doc.data()))
+          .toList()
+        ..sort((a, b) {
+          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bDate.compareTo(aDate);
+        });
+
+
+    } catch (e) {
+      print('Error fetching review trips: $e');
     }
   }
 
@@ -127,39 +157,7 @@ class DashBoardController extends GetxController {
   }
 
 
-  Future<void> getAllTripManagerReviewTrips() async {
 
-    try {
-
-      print("Fetching trip manager review trips...");
-
-      // fetch all the trips for the trip manager for which in_review is true
-      final snapshot = await _fireStore
-          .collection('trips')
-          .where('in_review', isEqualTo: true)
-          .get();
-
-      print("Fetched ${snapshot.docs.length} trips for review.");
-
-      allCreatedTrips.value = snapshot.docs
-          .map((doc) => TripModel.fromJson(doc.data()))
-          .toList()
-        ..sort((a, b) {
-          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          return bDate.compareTo(aDate); // latest first
-        });
-
-      print("Total trips in review: ${allCreatedTrips.length}");
-
-
-
-    }
-    catch(e) {
-      print('Error fetching trip manager review trips: $e');
-    }
-
-  }
 
   String _normalizeMobile(String number) {
     final digitsOnly = number.replaceAll(RegExp(r'\D'), '');

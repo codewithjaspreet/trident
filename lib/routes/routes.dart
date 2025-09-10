@@ -13,6 +13,7 @@ class TRoutes{
   static const String registerScreen = '/registerScreen';
   static const String otpScreen = '/otp';
   static const String splashScreen = '/splash';
+  static const String navigationBar = '/navigationBar';
 
 
   static List sideBarMenuItems = [

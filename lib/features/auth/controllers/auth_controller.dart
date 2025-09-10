@@ -35,7 +35,7 @@ class AuthController extends GetxController {
     Future.microtask(() {
       if (user != null && storedRole != null) {
         debugPrint('[Auth] Redirecting to dashboard');
-        Get.toNamed(TRoutes.dashBoardScreen);
+        Get.toNamed(TRoutes.navigationBar);
       } else {
         debugPrint('[Auth] Redirecting to login');
         Get.toNamed(TRoutes.loginScreen);
@@ -177,7 +177,7 @@ class AuthController extends GetxController {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('[Navigation] Redirecting to Dashboard from _handleUserPostVerification');
-      Get.offAllNamed(TRoutes.dashBoardScreen);
+      Get.offAllNamed(TRoutes.navigationBar);
     });
   }
   Future<void> logout() async {

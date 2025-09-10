@@ -246,7 +246,6 @@ class TripEditScreen extends StatelessWidget {
       _DetailItem('Vehicle', trip.billedVehicle, Icons.local_shipping),
       _DetailItem('Type', trip.tripType, Icons.category),
       _DetailItem('Billed To', trip.billedTo, Icons.business),
-      _DetailItem('Authorizer', trip.selectedTripAuthorizer, Icons.verified_user),
     ];
 
     return Column(

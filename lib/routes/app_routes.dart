@@ -4,6 +4,7 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:trident/features/auth/views/login/login.dart';
 import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
+import 'package:trident/features/dashboard/views/navigation_bar.dart';
 import 'package:trident/routes/routes.dart';
 
 import '../features/auth/views/login/otp.dart';
@@ -41,6 +42,12 @@ class TAppRoutes {
     GetPage(
       name: TRoutes.splashScreen,
       page: () => const SplashScreen(),
+    ),
+
+
+    GetPage(
+      name: TRoutes.navigationBar,
+      page: () =>  TridentNavigationBar(),
     ),
 
 

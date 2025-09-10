@@ -359,7 +359,6 @@ class TripManagerReviewCard extends StatelessWidget {
   Widget _buildActionButtons(BuildContext context) {
     return Row(
       children: [
-
         SizedBox(width: TSizes.sm.w),
         Expanded(
           child: _buildActionButton(
@@ -607,5 +606,4 @@ class TripManagerReviewCard extends StatelessWidget {
       },
     );
   }
-
 }
