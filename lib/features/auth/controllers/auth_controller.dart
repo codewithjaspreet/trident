@@ -19,7 +19,8 @@ class AuthController extends GetxController {
 
   final RxBool isLoading = false.obs;
   final RxString verificationId = ''.obs;
-  final Rx<ConfirmationResult?> desktopConfirmationResult = Rx<ConfirmationResult?>(null);
+  final Rx<ConfirmationResult?> desktopConfirmationResult =
+      Rx<ConfirmationResult?>(null);
 
   late RecaptchaVerifier _recaptchaVerifier;
 
@@ -35,6 +36,10 @@ class AuthController extends GetxController {
     Future.microtask(() {
       if (user != null && storedRole != null) {
         debugPrint('[Auth] Redirecting to dashboard');
+
+        if(storedRole == 'driver') {
+          Get.toNamed(TRoutes.dashBoardScreen);
+        }
         Get.toNamed(TRoutes.navigationBar);
       } else {
         debugPrint('[Auth] Redirecting to login');
@@ -42,7 +47,6 @@ class AuthController extends GetxController {
       }
     });
   }
-
 
   void _setupRecaptcha() {
     _recaptchaVerifier = RecaptchaVerifier(
@@ -57,6 +61,7 @@ class AuthController extends GetxController {
     raw = raw.replaceAll(' ', '').trim();
     return raw.startsWith('+') ? raw : '+91$raw';
   }
+
   Future<void> sendOtp(BuildContext context) async {
     final phoneNumber = _formatPhoneNumber(phoneController.text);
 
@@ -114,7 +119,6 @@ class AuthController extends GetxController {
     }
   }
 
-
   Future<void> verifyOtp() async {
     final smsCode = otpController.text.trim();
     if (smsCode.isEmpty) {
@@ -128,7 +132,8 @@ class AuthController extends GetxController {
       UserCredential userCredential;
 
       if (desktopConfirmationResult.value != null) {
-        userCredential = await desktopConfirmationResult.value!.confirm(smsCode);
+        userCredential =
+            await desktopConfirmationResult.value!.confirm(smsCode);
       } else {
         final credential = PhoneAuthProvider.credential(
           verificationId: verificationId.value,
@@ -176,10 +181,12 @@ class AuthController extends GetxController {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('[Navigation] Redirecting to Dashboard from _handleUserPostVerification');
+      debugPrint(
+          '[Navigation] Redirecting to Dashboard from _handleUserPostVerification');
       Get.offAllNamed(TRoutes.navigationBar);
     });
   }
+
   Future<void> logout() async {
     try {
       await _auth.signOut();
@@ -194,5 +201,4 @@ class AuthController extends GetxController {
       debugPrint('[Error] Logout Failed: $e');
     }
   }
-
 }

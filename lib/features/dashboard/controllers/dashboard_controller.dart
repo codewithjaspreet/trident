@@ -80,6 +80,7 @@ class DashBoardController extends GetxController {
           final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
           return bDate.compareTo(aDate);
         });
+      update();
 
     } catch (e) {
       print('Error fetching admin trips: $e');

@@ -1126,7 +1126,7 @@ class TripTimelineScreen extends StatelessWidget {
                 borderRadius: 12.r,
                 icon: const Icon(Icons.check_circle, color: Color(0xFF10B981)),
               );
-              Get.offAllNamed(TRoutes.dashBoardScreen);
+              Get.offAllNamed(TRoutes.navigationBar);
             } catch (e) {
               Get.snackbar(
                 'Error'.tr,

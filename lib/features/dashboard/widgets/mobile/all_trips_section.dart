@@ -6,8 +6,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:trident/features/dashboard/widgets/mobile/trip_manager_review_card.dart';
-
 import '../../../../utils/constants/sizes.dart';
 import '../../../trips/widgets/add_trip_mobile.dart';
 import '../../controllers/dashboard_controller.dart';
