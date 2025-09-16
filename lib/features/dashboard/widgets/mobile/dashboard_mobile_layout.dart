@@ -4,8 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:trident/features/dashboard/views/navigation_bar.dart';
 import 'package:trident/features/dashboard/widgets/mobile/review_trips_section.dart';
-
-import 'all_trips_section.dart';
+import '../../../trips/widgets/mobile/all_trips_section.dart';
 
 class DashboardMobileLayout extends StatelessWidget {
   DashboardMobileLayout({super.key});
@@ -20,9 +19,7 @@ class DashboardMobileLayout extends StatelessWidget {
     return Scaffold(
       body: Obx(() {
         return navigationController.currentIndex.value == 0
-            ? AllTrips(
-                dashBoardController: dashBoardController,
-                navigationController: navigationController,
+            ? const TripsManagementScreen(
               )
             : GetStorage().read('user_role') == 'driver'
                 ? Container(

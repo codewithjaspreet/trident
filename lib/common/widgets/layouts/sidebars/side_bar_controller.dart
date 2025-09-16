@@ -5,7 +5,7 @@ import 'package:trident/utils/device/device_utility.dart';
 class SideBarController extends GetxController{
 
 
-  final activeItem = TRoutes.dashBoardScreen.obs;
+  final activeItem = TRoutes.adminDashboard.obs;
   final hoverItem = ''.obs;
 
 

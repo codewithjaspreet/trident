@@ -1,7 +1,8 @@
 class TRoutes{
 
   static const String initial = '/';
-  static const String dashBoardScreen = '/dashboard';
+  static const String adminDashboard = '/adminDashboard';
+  static const String allTrips = '/allTrips';
   static const String completedTripsScreen = '/completedTrips';
   static const String activeTripsScreen = '/activeTrips';
   static const String createdTripsScreen = '/createdTrips';
@@ -17,7 +18,7 @@ class TRoutes{
 
 
   static List sideBarMenuItems = [
-    dashBoardScreen,
+    allTrips,
     completedTripsScreen,
     activeTripsScreen,
     createdTripsScreen,

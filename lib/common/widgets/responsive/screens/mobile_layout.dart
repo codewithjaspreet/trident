@@ -14,8 +14,8 @@ class MobileLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const THeader(),
-      drawer: const TSideBar(),
+      // appBar: const THeader(),
+      // drawer: const TSideBar(),
       body: body ?? const SizedBox(),
     );
   }

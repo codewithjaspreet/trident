@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/containers/rounded_container.dart';
-import 'package:trident/features/dashboard/views/dashboard.dart';
+import 'package:trident/features/trips/views/all_trips.dart';
 import 'package:trident/utils/constants/image_strings.dart';
 import 'package:trident/utils/constants/sizes.dart';
 import '../../../../common/widgets/textfeilds/custom_textfeild.dart';

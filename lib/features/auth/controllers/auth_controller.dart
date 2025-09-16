@@ -29,6 +29,8 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
+
+
   void handleAppLaunch() {
     final user = _auth.currentUser;
     final storedRole = _storage.read('user_role');
@@ -38,7 +40,7 @@ class AuthController extends GetxController {
         debugPrint('[Auth] Redirecting to dashboard');
 
         if(storedRole == 'driver') {
-          Get.toNamed(TRoutes.dashBoardScreen);
+          Get.toNamed(TRoutes.navigationBar);
         }
         Get.toNamed(TRoutes.navigationBar);
       } else {

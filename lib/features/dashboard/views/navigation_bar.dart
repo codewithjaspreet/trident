@@ -1,88 +1,326 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
-import 'package:trident/features/dashboard/views/dashboard.dart';
+import 'package:trident/features/trips/views/all_trips.dart';
+import 'package:trident/features/trips/widgets/add_trip_mobile.dart';
+import 'package:trident/utils/constants/colors.dart';
+
+import '../../../utils/coming_soon.dart';
+import 'admin_dashboard.dart';
 
 class TridentNavigationBar extends StatelessWidget {
   TridentNavigationBar({super.key});
 
-  DashBoardController dashBoardController = Get.put(DashBoardController());
+  final NavigationController navigationController =
+  Get.put(NavigationController());
+  final DashBoardController dashBoardController =
+  Get.put(DashBoardController());
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<NavigationController>(
-      init: NavigationController(),
       builder: (controller) {
-        return Scaffold(
-          backgroundColor: Colors.grey[50],
-          body: _buildCurrentScreen(controller.currentIndex.value),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              BottomNavigationBar(
-                currentIndex: controller.currentIndex.value,
-                onTap: controller.changeIndex,
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Colors.white,
-                selectedItemColor: Colors.blue[700],
-                unselectedItemColor: Colors.grey[600],
-                elevation: 8,
-                selectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
-                items:  [
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.local_shipping_outlined),
-                    activeIcon: Icon(Icons.local_shipping),
-                    label: 'All Trips',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.rate_review_outlined),
-                    activeIcon: const  Icon(Icons.rate_review),
-                    label:GetStorage().read('user_role') == 'driver' ? 'Insights' : 'Review Trips',
-                  ),
-                ],
-              ),
-            ],
+        return PersistentTabView(
+          context,
+          controller: controller.persistentTabController,
+          screens: _buildScreens(),
+          items: _buildNavBarItems(),
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: true,
+          stateManagement: true,
+          hideNavigationBarWhenKeyboardAppears: true,
+          padding: const EdgeInsets.only(top: 8),
+          backgroundColor: Colors.white,
+          isVisible: true,
+          animationSettings: const NavBarAnimationSettings(
+            navBarItemAnimation: ItemAnimationSettings(
+              duration: Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            ),
+            screenTransitionAnimation: ScreenTransitionAnimationSettings(
+              animateTabTransition: true,
+              duration: Duration(milliseconds: 300),
+              screenTransitionAnimationType:
+              ScreenTransitionAnimationType.fadeIn,
+            ),
           ),
+          confineToSafeArea: true,
+          navBarHeight: kBottomNavigationBarHeight + 10,
+          navBarStyle: NavBarStyle.style12,
+          onItemSelected: (index) {
+            controller.changeIndex(index);
+          },
         );
       },
     );
   }
 
-  Widget _buildCurrentScreen(int index) {
-    switch (index) {
-      case 0:
-        return const DashboardScreen();
-      case 1:
-        return  const DashboardScreen();
-      default:
-        return const DashboardScreen();
+  List<Widget> _buildScreens() {
+    final userRole = GetStorage().read('user_role') ?? 'driver';
+
+    if (userRole == 'admin') {
+      return [
+        // First tab: Admin Dashboard with nested navigation
+        Navigator(
+          key: navigationController.adminNavigatorKey,
+          onGenerateRoute: (settings) {
+            Widget page;
+            switch (settings.name) {
+              case '/':
+                page = const AdminDashboard();
+                break;
+              case '/allTrips':
+                page = Scaffold(
+                  appBar: AppBar(
+                    title: const Text('All Trips'),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    actions: [
+                      Container(
+                        margin: EdgeInsets.only(right: 12.w),
+                        child: SizedBox(
+                          width: 25.w,
+                          height: 25.h,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                              backgroundColor: Colors.grey[100],
+                              padding: EdgeInsets.zero,
+                            ),
+                            onPressed: () {
+                              Get.to(const AddTripMobile());
+                            },
+                            child: const Icon(Icons.add, size: 22, color: Colors.black87),
+                          ),
+                        ),
+                      ),
+                    ],
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios),
+                      onPressed: () {
+                        navigationController.adminNavigatorKey.currentState?.pop();
+                      },
+                    ),
+                  ),
+                  body: const AllTripsSection(),
+                );
+                break;
+              default:
+                page = const AdminDashboard();
+            }
+            return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, animation, secondaryAnimation) => page,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(
+                  CurveTween(curve: curve),
+                );
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
+        // Second tab: Coming Soon Page for Admin Analytics
+        const ComingSoonPage(),
+      ];
+    } else {
+      // For drivers and other roles
+      return [
+        // First tab: Admin Dashboard (or appropriate dashboard for the role)
+        const AdminDashboard(),
+        // Second tab: Coming Soon Page for role-specific feature
+        const ComingSoonPage(),
+      ];
     }
+  }
+
+  List<PersistentBottomNavBarItem> _buildNavBarItems() {
+    final userRole = GetStorage().read('user_role') ?? 'driver';
+
+    if (userRole == 'admin') {
+      return [
+        _buildNavBarItem(
+          icon: Icons.dashboard_outlined,
+          activeIcon: Icons.dashboard,
+          title: 'Dashboard',
+          activeColor: TColors.bgPrimary,
+          inactiveColor: Colors.grey[500]!,
+        ),
+        _buildNavBarItem(
+          icon: Icons.analytics_outlined,
+          activeIcon: Icons.analytics,
+          title: 'Analytics',
+          activeColor: TColors.bgPrimary,
+          inactiveColor: Colors.grey[500]!,
+        ),
+      ];
+    } else {
+      return [
+        _buildNavBarItem(
+          icon: Icons.local_shipping_outlined,
+          activeIcon: Icons.local_shipping,
+          title: 'All Trips',
+          activeColor: const Color(0xff515DEF),
+          inactiveColor: Colors.grey[600]!,
+        ),
+        _buildNavBarItem(
+          icon: Icons.upcoming_outlined,
+          activeIcon: Icons.upcoming,
+          title: userRole == 'driver' ? 'Upcoming' : 'Insights',
+          activeColor: const Color(0xff515DEF),
+          inactiveColor: Colors.grey[600]!,
+        ),
+      ];
+    }
+  }
+
+  PersistentBottomNavBarItem _buildNavBarItem({
+    required IconData icon,
+    required IconData activeIcon,
+    required String title,
+    required Color activeColor,
+    required Color inactiveColor,
+  }) {
+    return PersistentBottomNavBarItem(
+      icon: Icon(activeIcon),
+      inactiveIcon: Icon(icon),
+      title: title,
+      activeColorPrimary: activeColor,
+      inactiveColorPrimary: inactiveColor,
+      activeColorSecondary: TColors.primary,
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
+      iconSize: 24,
+    );
   }
 }
 
-// Placeholder controller - you can replace this with your own
 class NavigationController extends GetxController {
-  // reactive variable to hold the current index
+  late PersistentTabController persistentTabController;
   var currentIndex = 0.obs;
+  final DashBoardController dashBoardController =
+  Get.put(DashBoardController());
+  final GetStorage _storage = GetStorage();
+
+  // Navigator keys for nested navigation
+  final GlobalKey<NavigatorState> adminNavigatorKey =
+  GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> reviewNavigatorKey =
+  GlobalKey<NavigatorState>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    persistentTabController = PersistentTabController(initialIndex: 0);
+    _initializeForUserRole();
+  }
+
+  @override
+  void onClose() {
+    persistentTabController.dispose();
+    super.onClose();
+  }
+
+  void _initializeForUserRole() {
+    final userRole = _storage.read('user_role') ?? 'driver';
+
+    if (userRole == 'admin') {
+      dashBoardController.getAllCreatedTrips();
+    } else if (userRole == 'driver') {
+      dashBoardController.getAllDriverAssignedTrips();
+    } else {
+      dashBoardController.getAllCreatedTrips();
+    }
+  }
 
   void changeIndex(int index) {
     currentIndex.value = index;
+    final userRole = _storage.read('user_role') ?? 'driver';
 
-    DashBoardController controller = Get.find<DashBoardController>();
-    if (index == 0) {
-      controller.getAllCreatedTrips();
-    } else if (index == 1) {
-      controller.getAllReviewingTrips();
+    _handleNavigationLogic(index, userRole);
+    update();
+  }
+
+  void _handleNavigationLogic(int index, String userRole) {
+    switch (userRole) {
+      case 'admin':
+        _handleAdminNavigation(index);
+        break;
+      case 'driver':
+        _handleDriverNavigation(index);
+        break;
+      default:
+        _handleTripManagerNavigation(index);
+        break;
     }
+  }
+
+  void _handleAdminNavigation(int index) {
+    switch (index) {
+      case 0:
+      // Reset to dashboard if navigated away
+        if (adminNavigatorKey.currentState?.canPop() == true) {
+          adminNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+        }
+        break;
+      case 1:
+      // Second tab is now Coming Soon page, no additional logic needed
+        break;
+    }
+  }
+
+  void _handleDriverNavigation(int index) {
+    switch (index) {
+      case 0:
+        dashBoardController.getAllDriverAssignedTrips();
+        break;
+      case 1:
+      // Second tab is now Coming Soon page, no additional logic needed
+        break;
+    }
+  }
+
+  void _handleTripManagerNavigation(int index) {
+    switch (index) {
+      case 0:
+        dashBoardController.getAllCreatedTrips();
+        break;
+      case 1:
+      // Second tab is now Coming Soon page, no additional logic needed
+        break;
+    }
+  }
+
+  // Method to navigate to All Trips from AdminDashboard
+  void navigateToAllTrips() {
+    if (currentIndex.value == 0) {
+      adminNavigatorKey.currentState?.pushNamed('/allTrips');
+    }
+  }
+
+  void navigateToTab(int index) {
+    persistentTabController.jumpToTab(index);
+    changeIndex(index);
+  }
+
+  void refreshCurrentTab() {
+    final userRole = _storage.read('user_role') ?? 'driver';
+    _handleNavigationLogic(currentIndex.value, userRole);
   }
 }

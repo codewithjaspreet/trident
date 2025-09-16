@@ -50,7 +50,7 @@ class TSideBar extends StatelessWidget {
                   children: [
                     const TMenuItem(
                       icon: TImages.dashboard,
-                      route: TRoutes.dashBoardScreen,
+                      route: TRoutes.adminDashboard,
                       menuName: 'Dashboard',
                     ),
                     const TMenuItem(

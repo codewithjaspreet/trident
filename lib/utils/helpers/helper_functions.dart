@@ -140,4 +140,80 @@ class THelperFunctions {
 
     return await GetStorage().read('user_role');
   }
-}
+
+  static String formatIndianDateTime(String dateTimeString) {
+    try {
+      DateTime? parsedDateTime;
+
+      // Handle format like "2025-09-10 20:48:28.508"
+      if (dateTimeString.contains(' ') && dateTimeString.contains(':')) {
+        final parts = dateTimeString.split(' ');
+        final datePart = parts[0]; // 2025-09-10
+        final timePart = parts[1]; // 20:48:28.508
+
+        final dateComponents = datePart.split('-');
+        final timeComponents = timePart.split(':');
+
+        if (dateComponents.length == 3 && timeComponents.length >= 2) {
+          final year = int.parse(dateComponents[0]);
+          final month = int.parse(dateComponents[1]);
+          final day = int.parse(dateComponents[2]);
+          final hour = int.parse(timeComponents[0]);
+          final minute = int.parse(timeComponents[1]);
+
+          parsedDateTime = DateTime(year, month, day, hour, minute);
+        }
+      }
+      // Handle ISO format: 2025-09-10T15:41:115
+      else if (dateTimeString.contains('T')) {
+        parsedDateTime = DateTime.parse(dateTimeString);
+      }
+      // Handle simple date format: 2025-09-10
+      else if (dateTimeString.contains('-')) {
+        parsedDateTime = DateTime.parse(dateTimeString);
+      }
+
+      if (parsedDateTime != null) {
+        // Get day with suffix (1st, 2nd, 3rd, 4th, etc.)
+        String getDayWithSuffix(int day) {
+          if (day >= 11 && day <= 13) return '${day}th';
+          switch (day % 10) {
+            case 1:
+              return '${day}st';
+            case 2:
+              return '${day}nd';
+            case 3:
+              return '${day}rd';
+            default:
+              return '${day}th';
+          }
+        }
+
+        // Get month name
+        List<String> months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        final dayWithSuffix = getDayWithSuffix(parsedDateTime.day);
+        final monthName = months[parsedDateTime.month - 1];
+        final year = parsedDateTime.year;
+
+        // Format time as 12-hour with am/pm
+        final hour12 = parsedDateTime.hour == 0 ? 12 :
+        parsedDateTime.hour > 12 ? parsedDateTime.hour - 12 : parsedDateTime
+            .hour;
+        final amPm = parsedDateTime.hour >= 12 ? 'pm' : 'am';
+        final minute = parsedDateTime.minute.toString().padLeft(2, '0');
+
+        return '$dayWithSuffix $monthName, $year at $hour12:$minute $amPm';
+      }
+
+      return dateTimeString;
+    } catch (e) {
+      // Debug: Print the original string to see what format you're getting
+      print('Date parsing error for: $dateTimeString');
+      return dateTimeString;
+    }
+  }
+  }

@@ -6,7 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trident/common/widgets/layouts/sidebars/side_bar_controller.dart';
 import 'package:trident/data/models/trip_model.dart';
-import 'package:trident/features/dashboard/views/dashboard.dart';
+import 'package:trident/features/trips/views/all_trips.dart';
 import 'package:trident/features/dashboard/views/navigation_bar.dart';
 import 'package:trident/features/trips/controllers/trip_controller.dart';
 import 'package:trident/routes/routes.dart';
@@ -325,7 +325,7 @@ class PageControls extends StatelessWidget {
 
         // Navigate back to dashboard
         if (isDesktop) {
-          sideBarController.menuOnTap(TRoutes.dashBoardScreen);
+          sideBarController.menuOnTap(TRoutes.allTrips);
           tripController.changePage(0);
         } else {
           Get.off(() =>  TridentNavigationBar());

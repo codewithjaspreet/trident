@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../common/widgets/layouts/templates/site_layout.dart';
-import '../widgets/desktop/dashboard_desktop_layout.dart';
-import '../widgets/mobile/dashboard_mobile_layout.dart';
+import '../../dashboard/widgets/desktop/dashboard_desktop_layout.dart';
+import '../../dashboard/widgets/mobile/dashboard_mobile_layout.dart';
 
-class DashboardScreen extends StatelessWidget{
-  const DashboardScreen({super.key});
+class AllTripsSection extends StatelessWidget{
+  const AllTripsSection({super.key});
+
 
 
 

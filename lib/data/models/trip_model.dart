@@ -15,6 +15,7 @@ class TripModel {
   DocumentReference? consignee; // ✅ This is a reference
   DateTime? tripDate;
   DateTime? createdAt;
+  bool? in_review;
   DateTime? completedAt;
   List<TripStageModel> stages;
 
@@ -28,6 +29,7 @@ class TripModel {
     required this.createdBy,
     required this.tripDate,
     this.status = 'pending',
+    this.in_review = true,
     this.currentStage,
     this.consignor,
     this.consignee,
