@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:trident/features/auth/controllers/auth_controller.dart';
 import 'package:trident/features/trips/views/all_trips.dart';
 import '../../../utils/constants/colors.dart';
 import '../../trips/controllers/trip_controller.dart';
@@ -13,6 +14,7 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashBoardController controller = Get.put(DashBoardController());
+    final AuthController authController = Get.find<AuthController>();
 
     return Scaffold(
       backgroundColor: TColors.primaryBackground,
@@ -22,7 +24,7 @@ class AdminDashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAnimatedHeader(controller),
+              _buildAnimatedHeader(controller,authController),
               SizedBox(height: 20.h),
               _buildAnalyticsSection(controller),
               SizedBox(height: 24.h),
@@ -34,7 +36,7 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedHeader(DashBoardController controller) {
+  Widget _buildAnimatedHeader(DashBoardController controller, AuthController authController) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 800),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -104,7 +106,7 @@ class AdminDashboard extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Handle notification tap
+                      authController.logout();
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -115,7 +117,7 @@ class AdminDashboard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Icon(
-                        Icons.notifications_outlined,
+                        Icons.logout,
                         color: TColors.white,
                         size: 18.sp,
                       ),

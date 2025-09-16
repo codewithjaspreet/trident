@@ -269,6 +269,10 @@ class TripsManagementScreen extends StatelessWidget {
         return _buildLoadingState();
       }
 
+      // get trips based on status , if it is review trip
+
+      print('STATUS IS - $status');
+
       final filteredTrips = tripController.getFilteredTripsForStatus(
           controller.allCreatedTrips, status);
 

@@ -294,7 +294,7 @@ class PageControls extends StatelessWidget {
           driverName: tripController.selectedDriver.value,
           source: tripController.selectedSource.value,
           destination: tripController.selectedDestination.value,
-          status: 'Open', // First stage status
+          status: 'in_review', // First stage status
           tripType: tripController.tripType.value,
           completedAt: null,
           createdBy: userMobileNo?.toString() ?? '',
