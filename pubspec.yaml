@@ -41,10 +41,11 @@ dependencies:
   data_table_2:
   flutter_svg:
   url_strategy: ^0.2.0
-  syncfusion_flutter_charts: ^29.2.5
+  syncfusion_flutter_charts: ^31.1.20
   flutter_otp_text_field: ^1.5.1+1
   universal_html: ^2.2.4
   persistent_bottom_nav_bar: ^6.2.1
+  syncfusion_flutter_datepicker: ^31.1.20
 
   # Icons
   iconsax: ^0.0.8

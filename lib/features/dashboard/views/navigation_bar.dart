@@ -15,9 +15,9 @@ class TridentNavigationBar extends StatelessWidget {
   TridentNavigationBar({super.key});
 
   final NavigationController navigationController =
-  Get.put(NavigationController());
+      Get.put(NavigationController());
   final DashBoardController dashBoardController =
-  Get.put(DashBoardController());
+      Get.put(DashBoardController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class TridentNavigationBar extends StatelessWidget {
               animateTabTransition: true,
               duration: Duration(milliseconds: 300),
               screenTransitionAnimationType:
-              ScreenTransitionAnimationType.fadeIn,
+                  ScreenTransitionAnimationType.fadeIn,
             ),
           ),
           confineToSafeArea: true,
@@ -88,14 +88,16 @@ class TridentNavigationBar extends StatelessWidget {
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               shape: const CircleBorder(),
-                              side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                              side: BorderSide(
+                                  color: Colors.grey[400]!, width: 1.5),
                               backgroundColor: Colors.grey[100],
                               padding: EdgeInsets.zero,
                             ),
                             onPressed: () {
                               Get.to(const AddTripMobile());
                             },
-                            child: const Icon(Icons.add, size: 22, color: Colors.black87),
+                            child: const Icon(Icons.add,
+                                size: 22, color: Colors.black87),
                           ),
                         ),
                       ),
@@ -103,7 +105,8 @@ class TridentNavigationBar extends StatelessWidget {
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back_ios),
                       onPressed: () {
-                        navigationController.adminNavigatorKey.currentState?.pop();
+                        navigationController.adminNavigatorKey.currentState
+                            ?.pop();
                       },
                     ),
                   ),
@@ -138,14 +141,113 @@ class TridentNavigationBar extends StatelessWidget {
         const ComingSoonPage(),
       ];
     } else {
-      // For drivers and other roles
+      // For drivers and other roles - FIXED: Add nested navigation for all roles
       return [
-        // First tab: Admin Dashboard (or appropriate dashboard for the role)
-        const AdminDashboard(),
+        // First tab: Dashboard with nested navigation for trips
+        Navigator(
+          key: navigationController
+              .driverNavigatorKey, // Use driver navigator key
+          onGenerateRoute: (settings) {
+            Widget page;
+            switch (settings.name) {
+              case '/':
+                page = const AdminDashboard(); // This now handles all roles
+                break;
+              case '/allTrips':
+                page = _buildTripsPageForRole(userRole);
+                break;
+              default:
+                page = const AdminDashboard();
+            }
+            return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, animation, secondaryAnimation) => page,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(
+                  CurveTween(curve: curve),
+                );
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            );
+          },
+        ),
         // Second tab: Coming Soon Page for role-specific feature
         const ComingSoonPage(),
       ];
     }
+  }
+
+  Widget _buildTripsPageForRole(String userRole) {
+    String appBarTitle;
+    bool showAddButton = false;
+
+    switch (userRole) {
+      case 'admin':
+        appBarTitle = 'All Trips';
+        showAddButton = true; // Only admin can add trips
+        break;
+      case 'driver':
+        appBarTitle = 'My Trips';
+        showAddButton = false; // Driver cannot add trips
+        break;
+      case 'trip manager':
+      case 'tripmanager':
+        appBarTitle = 'Managed Trips';
+        showAddButton = false; // Trip manager cannot add trips
+        break;
+      default:
+        appBarTitle = 'All Trips';
+        showAddButton = false; // Default: no add button
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appBarTitle),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        actions: showAddButton
+            ? [
+                Container(
+                  margin: EdgeInsets.only(right: 12.w),
+                  child: SizedBox(
+                    width: 25.w,
+                    height: 25.h,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                        backgroundColor: Colors.grey[100],
+                        padding: EdgeInsets.zero,
+                      ),
+                      onPressed: () {
+                        Get.to(const AddTripMobile());
+                      },
+                      child: const Icon(Icons.add,
+                          size: 22, color: Colors.black87),
+                    ),
+                  ),
+                ),
+              ]
+            : null,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            navigationController.getCurrentNavigatorKey()?.currentState?.pop();
+          },
+        ),
+      ),
+      body: const AllTripsSection(),
+    );
   }
 
   List<PersistentBottomNavBarItem> _buildNavBarItems() {
@@ -173,7 +275,7 @@ class TridentNavigationBar extends StatelessWidget {
         _buildNavBarItem(
           icon: Icons.local_shipping_outlined,
           activeIcon: Icons.local_shipping,
-          title: 'All Trips',
+          title: userRole == 'driver' ? 'My Trips' : 'All Trips',
           activeColor: const Color(0xff515DEF),
           inactiveColor: Colors.grey[600]!,
         ),
@@ -215,14 +317,16 @@ class NavigationController extends GetxController {
   late PersistentTabController persistentTabController;
   var currentIndex = 0.obs;
   final DashBoardController dashBoardController =
-  Get.put(DashBoardController());
+      Get.put(DashBoardController());
   final GetStorage _storage = GetStorage();
 
   // Navigator keys for nested navigation
   final GlobalKey<NavigatorState> adminNavigatorKey =
-  GlobalKey<NavigatorState>();
-  final GlobalKey<NavigatorState> reviewNavigatorKey =
-  GlobalKey<NavigatorState>();
+      GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> driverNavigatorKey =
+      GlobalKey<NavigatorState>(); // Added driver navigator key
+  final GlobalKey<NavigatorState> tripManagerNavigatorKey =
+      GlobalKey<NavigatorState>(); // Added trip manager navigator key
 
   @override
   void onInit() {
@@ -246,6 +350,23 @@ class NavigationController extends GetxController {
       dashBoardController.getAllDriverAssignedTrips();
     } else {
       dashBoardController.getAllCreatedTrips();
+    }
+  }
+
+  // Helper method to get the current navigator key based on user role
+  GlobalKey<NavigatorState>? getCurrentNavigatorKey() {
+    final userRole = _storage.read('user_role') ?? 'driver';
+
+    switch (userRole) {
+      case 'admin':
+        return adminNavigatorKey;
+      case 'driver':
+        return driverNavigatorKey;
+      case 'trip manager':
+      case 'tripmanager':
+        return tripManagerNavigatorKey;
+      default:
+        return driverNavigatorKey;
     }
   }
 
@@ -274,13 +395,13 @@ class NavigationController extends GetxController {
   void _handleAdminNavigation(int index) {
     switch (index) {
       case 0:
-      // Reset to dashboard if navigated away
+        // Reset to dashboard if navigated away
         if (adminNavigatorKey.currentState?.canPop() == true) {
           adminNavigatorKey.currentState?.popUntil((route) => route.isFirst);
         }
         break;
       case 1:
-      // Second tab is now Coming Soon page, no additional logic needed
+        // Second tab is now Coming Soon page, no additional logic needed
         break;
     }
   }
@@ -288,10 +409,14 @@ class NavigationController extends GetxController {
   void _handleDriverNavigation(int index) {
     switch (index) {
       case 0:
+        // Reset to dashboard if navigated away
+        if (driverNavigatorKey.currentState?.canPop() == true) {
+          driverNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+        }
         dashBoardController.getAllDriverAssignedTrips();
         break;
       case 1:
-      // Second tab is now Coming Soon page, no additional logic needed
+        // Second tab is now Coming Soon page, no additional logic needed
         break;
     }
   }
@@ -299,18 +424,28 @@ class NavigationController extends GetxController {
   void _handleTripManagerNavigation(int index) {
     switch (index) {
       case 0:
+        // Reset to dashboard if navigated away
+        if (tripManagerNavigatorKey.currentState?.canPop() == true) {
+          tripManagerNavigatorKey.currentState
+              ?.popUntil((route) => route.isFirst);
+        }
         dashBoardController.getAllCreatedTrips();
         break;
       case 1:
-      // Second tab is now Coming Soon page, no additional logic needed
+        // Second tab is now Coming Soon page, no additional logic needed
         break;
     }
   }
 
-  // Method to navigate to All Trips from AdminDashboard
+  // Updated method to navigate to All Trips from Dashboard (works for all roles)
   void navigateToAllTrips() {
     if (currentIndex.value == 0) {
-      adminNavigatorKey.currentState?.pushNamed('/allTrips');
+      final userRole = _storage.read('user_role') ?? 'driver';
+      final navigatorKey = getCurrentNavigatorKey();
+
+      if (navigatorKey != null) {
+        navigatorKey.currentState?.pushNamed('/allTrips');
+      }
     }
   }
 

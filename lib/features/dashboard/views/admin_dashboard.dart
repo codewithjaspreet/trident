@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:trident/features/auth/controllers/auth_controller.dart';
-import 'package:trident/features/trips/views/all_trips.dart';
 import '../../../utils/constants/colors.dart';
 import '../../trips/controllers/trip_controller.dart';
 import '../controllers/dashboard_controller.dart';
@@ -24,11 +23,11 @@ class AdminDashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAnimatedHeader(controller,authController),
+              _buildAnimatedHeader(controller, authController),
               SizedBox(height: 20.h),
               _buildAnalyticsSection(controller),
               SizedBox(height: 24.h),
-              _buildQuickActionsGrid(),
+              _buildQuickActionsGrid(controller),
             ],
           ),
         ),
@@ -36,100 +35,137 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedHeader(DashBoardController controller, AuthController authController) {
-    return TweenAnimationBuilder<double>(
-      duration: const Duration(milliseconds: 800),
-      tween: Tween(begin: 0.0, end: 1.0),
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, (1 - value) * -30),
-          child: Opacity(
-            opacity: value,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(18.w),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [TColors.bgPrimary, TColors.accent.withOpacity(0.8)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+  Widget _buildAnimatedHeader(
+      DashBoardController controller, AuthController authController) {
+    return Obx(() {
+      final userRole =
+          controller.loggedInUser.value.userRole?.toLowerCase() ?? 'user';
+
+      String getDashboardTitle(String role) {
+        switch (role) {
+          case 'admin':
+            return 'Admin Dashboard';
+          case 'trip manager':
+          case 'tripmanager':
+            return 'Trip Manager Dashboard';
+          case 'driver':
+            return 'Driver Dashboard';
+          default:
+            return 'Dashboard';
+        }
+      }
+
+      IconData getDashboardIcon(String role) {
+        switch (role) {
+          case 'admin':
+            return Icons.admin_panel_settings_rounded;
+          case 'trip manager':
+          case 'tripmanager':
+            return Icons.manage_accounts_rounded;
+          case 'driver':
+            return Icons.local_shipping_rounded;
+          default:
+            return Icons.dashboard_rounded;
+        }
+      }
+
+      return TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 800),
+        tween: Tween(begin: 0.0, end: 1.0),
+        builder: (context, value, child) {
+          return Transform.translate(
+            offset: Offset(0, (1 - value) * -30),
+            child: Opacity(
+              opacity: value,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(18.w),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      TColors.bgPrimary,
+                      TColors.accent.withOpacity(0.8)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TColors.bgPrimary.withOpacity(0.25),
+                      blurRadius: 12.r,
+                      offset: Offset(0, 6.h),
+                    ),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(16.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: TColors.bgPrimary.withOpacity(0.25),
-                    blurRadius: 12.r,
-                    offset: Offset(0, 6.h),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 600),
-                    width: 48.w,
-                    height: 48.w,
-                    decoration: BoxDecoration(
-                      color: TColors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.admin_panel_settings_rounded,
-                      color: TColors.white,
-                      size: 24.sp,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Admin Dashboard',
-                          style: TextStyle(
-                            color: TColors.white,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        Obx(() => Text(
-                              'User: ${controller.loggedInUser.value.userMobileNumber}',
-                              style: TextStyle(
-                                color: TColors.white.withOpacity(0.85),
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      authController.logout();
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: 36.w,
-                      height: 36.w,
+                child: Row(
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 600),
+                      width: 48.w,
+                      height: 48.w,
                       decoration: BoxDecoration(
-                        color: TColors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(10.r),
+                        color: TColors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Icon(
-                        Icons.logout,
+                        getDashboardIcon(userRole),
                         color: TColors.white,
-                        size: 18.sp,
+                        size: 24.sp,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            getDashboardTitle(userRole),
+                            style: TextStyle(
+                              color: TColors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            'User: ${controller.loggedInUser.value.userMobileNumber}',
+                            style: TextStyle(
+                              color: TColors.white.withOpacity(0.85),
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        authController.logout();
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          color: TColors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Icon(
+                          Icons.logout,
+                          color: TColors.white,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    });
   }
 
   Widget _buildAnalyticsSection(DashBoardController controller) {
@@ -155,50 +191,142 @@ class AdminDashboard extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         Obx(() {
-          final totalTrips = controller.allCreatedTrips.length;
-          final reviewTrips = controller.allReviewTrips.length;
-
-          final TripController tripController = Get.put(TripController());
-
-          final totalVehicles = tripController.allVehicles.length;
-          final totalDrivers = tripController.allDrivers.length;
-
-          return GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 12.w,
-            mainAxisSpacing: 12.h,
-            childAspectRatio: 1.35,
-            children: [
-              _buildAnimatedAnalyticsCard(
-                'Total Trips Created',
-                totalTrips.toString(),
-                '+${(totalTrips).toInt()}',
-                Icons.route_rounded,
-                TColors.success,
-                0,
-              ),
-              _buildAnimatedAnalyticsCard(
-                'Total Drivers',
-                totalDrivers.toString(),
-                '',
-                Icons.person_rounded,
-                TColors.info,
-                1,
-              ),
-
-              _buildAnimatedAnalyticsCard(
-                'Total Vehicles',
-                totalVehicles.toString(),
-                '',
-                Icons.local_shipping_rounded,
-                TColors.bgPrimary,
-                3,
-              ),
-            ],
-          );
+          final userRole =
+              controller.loggedInUser.value.userRole?.toLowerCase() ?? 'user';
+          return _buildRoleBasedAnalytics(controller, userRole);
         }),
+      ],
+    );
+  }
+
+  Widget _buildRoleBasedAnalytics(DashBoardController controller, String role) {
+    final TripController tripController = Get.put(TripController());
+
+    switch (role) {
+      case 'admin':
+      case 'trip manager':
+      case 'tripmanager':
+        // Both admin and trip manager get the same analytics
+        return _buildAdminAnalytics(controller, tripController);
+      case 'driver':
+        return _buildDriverAnalytics(controller, tripController);
+      default:
+        return _buildDefaultAnalytics(controller, tripController);
+    }
+  }
+
+  Widget _buildAdminAnalytics(
+      DashBoardController controller, TripController tripController) {
+    final totalTrips = controller.allCreatedTrips.length;
+    final totalVehicles = tripController.allVehicles.length;
+    final totalDrivers = tripController.allDrivers.length;
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.35,
+      children: [
+        _buildAnimatedAnalyticsCard(
+          'Total Trips',
+          totalTrips.toString(),
+          '+${totalTrips.toInt()}',
+          Icons.route_rounded,
+          TColors.success,
+          0,
+        ),
+        _buildAnimatedAnalyticsCard(
+          'Total Drivers',
+          totalDrivers.toString(),
+          '',
+          Icons.person_rounded,
+          TColors.info,
+          1,
+        ),
+        _buildAnimatedAnalyticsCard(
+          'Total Vehicles',
+          totalVehicles.toString(),
+          '',
+          Icons.local_shipping_rounded,
+          TColors.bgPrimary,
+          2,
+        ),
+        _buildAnimatedAnalyticsCard(
+          'Pending Reviews',
+          controller.allReviewTrips.length.toString(),
+          '',
+          Icons.pending_actions_rounded,
+          TColors.warning,
+          3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDriverAnalytics(
+      DashBoardController controller, TripController tripController) {
+    // Filter trips assigned to this driver (you'll need to implement this logic)
+    final myTrips = controller.allCreatedTrips.where((trip) =>
+        // Add your logic to filter trips for this specific driver
+        // For now, showing all trips - replace with actual filtering
+        true).length;
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.35,
+      children: [
+        _buildAnimatedAnalyticsCard(
+          'My Trips',
+          myTrips.toString(),
+          '',
+          Icons.route_rounded,
+          TColors.success,
+          0,
+        ),
+        _buildAnimatedAnalyticsCard(
+          'Completed Today',
+          '${(myTrips * 0.3).toInt()}', // Example calculation
+          '',
+          Icons.check_circle_rounded,
+          TColors.info,
+          1,
+        ),
+        _buildAnimatedAnalyticsCard(
+          'Pending Trips',
+          '${(myTrips * 0.4).toInt()}', // Example calculation
+          '',
+          Icons.pending_rounded,
+          TColors.warning,
+          2,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDefaultAnalytics(
+      DashBoardController controller, TripController tripController) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.35,
+      children: [
+        _buildAnimatedAnalyticsCard(
+          'Total Trips',
+          controller.allCreatedTrips.length.toString(),
+          '',
+          Icons.route_rounded,
+          TColors.success,
+          0,
+        ),
       ],
     );
   }
@@ -221,8 +349,6 @@ class AdminDashboard extends StatelessWidget {
             opacity: animValue,
             child: GestureDetector(
               onTap: () {
-                // Add haptic feedback
-                // HapticFeedback.lightImpact();
                 print('Tapped on $title');
               },
               child: AnimatedContainer(
@@ -259,7 +385,6 @@ class AdminDashboard extends StatelessWidget {
                             size: 16.sp,
                           ),
                         ),
-
                       ],
                     ),
                     SizedBox(height: 8.h),
@@ -307,7 +432,7 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsGrid() {
+  Widget _buildQuickActionsGrid(DashBoardController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -329,43 +454,112 @@ class AdminDashboard extends StatelessWidget {
           },
         ),
         SizedBox(height: 12.h),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 12.w,
-          mainAxisSpacing: 12.h,
-          childAspectRatio: 1.15,
-          children: [
-            _buildAnimatedActionCard(
-              'Trips',
-              'Monitor routes',
-              Icons.route_outlined,
-              TColors.warning,
-              2,
-            ),
-            _buildAnimatedActionCard(
-              'Drivers',
-              'Manage profiles',
-              Icons.person_outline_rounded,
-              TColors.bgPrimary,
-              0,
-            ),
-            _buildAnimatedActionCard(
-              'Vehicles',
-              'Track fleet',
-              Icons.local_shipping_outlined,
-              TColors.success,
-              1,
-            ),
-            _buildAnimatedActionCard(
-              'Analytics',
-              'View reports',
-              Icons.analytics_outlined,
-              TColors.info,
-              3,
-            ),
-          ],
+        Obx(() {
+          final userRole =
+              controller.loggedInUser.value.userRole?.toLowerCase() ?? 'user';
+          return _buildRoleBasedQuickActions(userRole);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildRoleBasedQuickActions(String role) {
+    switch (role) {
+      case 'admin':
+      case 'trip manager':
+      case 'tripmanager':
+        // Both admin and trip manager get the same quick actions
+        return _buildAdminQuickActions();
+      case 'driver':
+        return _buildDriverQuickActions();
+      default:
+        return _buildDefaultQuickActions();
+    }
+  }
+
+  Widget _buildAdminQuickActions() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.15,
+      children: [
+        _buildAnimatedActionCard(
+          'Trips',
+          'Monitor all routes',
+          Icons.route_outlined,
+          TColors.warning,
+          0,
+        ),
+        _buildAnimatedActionCard(
+          'Drivers',
+          'Manage profiles',
+          Icons.person_outline_rounded,
+          TColors.bgPrimary,
+          1,
+        ),
+        _buildAnimatedActionCard(
+          'Vehicles',
+          'Track fleet',
+          Icons.local_shipping_outlined,
+          TColors.success,
+          2,
+        ),
+        _buildAnimatedActionCard(
+          'Analytics',
+          'View reports',
+          Icons.analytics_outlined,
+          TColors.info,
+          3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDriverQuickActions() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.15,
+      children: [
+        _buildAnimatedActionCard(
+          'My Trips',
+          'View assigned trips',
+          Icons.route_outlined,
+          TColors.warning,
+          0,
+        ),
+        _buildAnimatedActionCard(
+          'Navigation',
+          'Start navigation',
+          Icons.navigation_outlined,
+          TColors.info,
+          1,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDefaultQuickActions() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 12.w,
+      mainAxisSpacing: 12.h,
+      childAspectRatio: 1.15,
+      children: [
+        _buildAnimatedActionCard(
+          'Trips',
+          'View trips',
+          Icons.route_outlined,
+          TColors.warning,
+          0,
         ),
       ],
     );
@@ -388,8 +582,6 @@ class AdminDashboard extends StatelessWidget {
             opacity: animValue,
             child: GestureDetector(
               onTap: () {
-                // Add haptic feedback
-                // HapticFeedback.mediumImpact();
                 _handleNavigation(title);
               },
               child: AnimatedContainer(
@@ -468,24 +660,31 @@ class AdminDashboard extends StatelessWidget {
   }
 
   void _handleNavigation(String title) {
+    final NavigationController navController = Get.find<NavigationController>();
+
     switch (title.toLowerCase()) {
       case 'drivers':
-      // Navigate to drivers screen
         print('Navigate to Drivers');
         break;
       case 'vehicles':
-      // Navigate to vehicles screen
         print('Navigate to Vehicles');
         break;
       case 'trips':
-      // Use the nested navigation instead of Get.to()
-        final NavigationController navController = Get.find<NavigationController>();
+      case 'my trips':
         navController.navigateToAllTrips();
         print('Navigate to Trips');
         break;
       case 'analytics':
-      // Navigate to analytics screen
         print('Navigate to Analytics');
+        break;
+      case 'reviews':
+        print('Navigate to Reviews');
+        break;
+      case 'routes':
+        print('Navigate to Routes');
+        break;
+      case 'navigation':
+        print('Start Navigation');
         break;
     }
   }

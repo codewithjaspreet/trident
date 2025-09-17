@@ -71,7 +71,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.trident"
-        minSdk = 23
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
