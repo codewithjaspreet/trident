@@ -1,4 +1,5 @@
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -309,7 +310,7 @@ class TripController extends GetxController {
     final trip = originalTrip.value!;
 
     return (selectedTripDate.value != null &&
-            selectedTripDate.value != trip.tripDate) ||
+        selectedTripDate.value != trip.tripDate) ||
         (selectedBilledTo.value.isNotEmpty &&
             selectedBilledTo.value != trip.billedTo);
     // ... checks for all other fields
@@ -338,7 +339,7 @@ class TripController extends GetxController {
         'destination': selectedDestination.value,
         'consignor': selectedConsignor.value,
         'consignee':
-            selectedConsignee.value, // Extract ID from DocumentReference
+        selectedConsignee.value, // Extract ID from DocumentReference
         'trip_type': tripType.value,
         'updated_at': FieldValue.serverTimestamp(),
       };
@@ -388,7 +389,7 @@ class TripController extends GetxController {
       final snapshot = await _fireStore
           .collection('trips')
           .where('created_at',
-              isEqualTo: Timestamp.fromDate(originalTrip.value!.createdAt!))
+          isEqualTo: Timestamp.fromDate(originalTrip.value!.createdAt!))
           .limit(1)
           .get();
 
@@ -409,11 +410,11 @@ class TripController extends GetxController {
         .orderBy('created_at', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => TripModel.fromJson({
-                  ...doc.data(),
-                  'id': doc.id,
-                }))
-            .toList());
+        .map((doc) => TripModel.fromJson({
+      ...doc.data(),
+      'id': doc.id,
+    }))
+        .toList());
   }
 
   // ================== EXISTING FUNCTIONALITY ==================
@@ -441,10 +442,10 @@ class TripController extends GetxController {
       final tripDoc = snapshot.docs.first;
       final tripId = tripDoc.id;
       final stagesData =
-          List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
+      List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
 
       final nextIndex =
-          stagesData.indexWhere((s) => s['is_completed'] == false);
+      stagesData.indexWhere((s) => s['is_completed'] == false);
       if (index != nextIndex) {
         _showErrorMessage(
             "Invalid Action", "Please complete stages in sequential order");
@@ -455,7 +456,7 @@ class TripController extends GetxController {
       stagesData[index]['completed_at'] = Timestamp.now();
 
       final lastCompleted =
-          stagesData.lastWhere((s) => s['is_completed'] == true);
+      stagesData.lastWhere((s) => s['is_completed'] == true);
       final currentStageName = lastCompleted['name'] ?? '';
 
       await _fireStore.collection('trips').doc(tripId).update({
@@ -491,7 +492,7 @@ class TripController extends GetxController {
       final tripDoc = snapshot.docs.first;
       final tripId = tripDoc.id;
       final stagesData =
-          List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
+      List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
 
       if (stageIndex < 0 || stageIndex >= stagesData.length) {
         _showErrorMessage("Invalid Action", "Invalid stage index");
@@ -533,7 +534,7 @@ class TripController extends GetxController {
 
       final tripDoc = snapshot.docs.first;
       final stagesData =
-          List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
+      List<Map<String, dynamic>>.from(tripDoc.data()['stages'] ?? []);
 
       return stagesData.map((stage) {
         return {
@@ -661,7 +662,7 @@ class TripController extends GetxController {
       final source = (trip.source?.toString() ?? '').toLowerCase();
       final driverName = (trip.driverName?.toString() ?? '').toLowerCase();
       final billedVehicle =
-          (trip.billedVehicle?.toString() ?? '').toLowerCase();
+      (trip.billedVehicle?.toString() ?? '').toLowerCase();
       final consignor = (trip.consignor?.toString() ?? '').toLowerCase();
 
       return destination.contains(query) ||
@@ -744,11 +745,11 @@ class TripController extends GetxController {
           final dateA = a.createdAt is DateTime
               ? a.createdAt as DateTime
               : DateTime.tryParse(a.createdAt?.toString() ?? '') ??
-                  DateTime.now();
+              DateTime.now();
           final dateB = b.createdAt is DateTime
               ? b.createdAt as DateTime
               : DateTime.tryParse(b.createdAt?.toString() ?? '') ??
-                  DateTime.now();
+              DateTime.now();
           return dateB.compareTo(dateA);
         });
         break;
@@ -757,11 +758,11 @@ class TripController extends GetxController {
           final dateA = a.createdAt is DateTime
               ? a.createdAt as DateTime
               : DateTime.tryParse(a.createdAt?.toString() ?? '') ??
-                  DateTime.now();
+              DateTime.now();
           final dateB = b.createdAt is DateTime
               ? b.createdAt as DateTime
               : DateTime.tryParse(b.createdAt?.toString() ?? '') ??
-                  DateTime.now();
+              DateTime.now();
           return dateA.compareTo(dateB);
         });
         break;
@@ -912,31 +913,31 @@ class TripController extends GetxController {
 
   // Get filter options for different categories
   List<Map<String, String>> get dateFilterOptions => [
-        {'value': 'all', 'label': 'All Time'},
-        {'value': 'today', 'label': 'Today'},
-        {'value': 'this_week', 'label': 'This Week'},
-        {'value': 'this_month', 'label': 'This Month'},
-      ];
+    {'value': 'all', 'label': 'All Time'},
+    {'value': 'today', 'label': 'Today'},
+    {'value': 'this_week', 'label': 'This Week'},
+    {'value': 'this_month', 'label': 'This Month'},
+  ];
 
   List<Map<String, String>> get statusFilterOptions => [
-        {'value': 'all', 'label': 'All Status'},
-        {'value': 'open', 'label': 'Open'},
-        {'value': 'in_review', 'label': 'In Review'},
-        {'value': 'completed', 'label': 'Completed'},
-        {'value': 'vehicle_dock', 'label': 'Vehicle Dock'},
-        {'value': 'vehicle_loading', 'label': 'Vehicle Loading'},
-        {'value': 'dispatch', 'label': 'Dispatch'},
-        {'value': 'vehicle_return', 'label': 'Vehicle Return'},
-      ];
+    {'value': 'all', 'label': 'All Status'},
+    {'value': 'open', 'label': 'Open'},
+    {'value': 'in_review', 'label': 'In Review'},
+    {'value': 'completed', 'label': 'Completed'},
+    {'value': 'vehicle_dock', 'label': 'Vehicle Dock'},
+    {'value': 'vehicle_loading', 'label': 'Vehicle Loading'},
+    {'value': 'dispatch', 'label': 'Dispatch'},
+    {'value': 'vehicle_return', 'label': 'Vehicle Return'},
+  ];
 
   List<Map<String, String>> get sortOptions => [
-        {'value': 'date_newest', 'label': 'Date Created (Newest)'},
-        {'value': 'date_oldest', 'label': 'Date Created (Oldest)'},
-        {'value': 'destination_az', 'label': 'Destination (A-Z)'},
-        {'value': 'destination_za', 'label': 'Destination (Z-A)'},
-        {'value': 'driver_az', 'label': 'Driver Name (A-Z)'},
-        {'value': 'status', 'label': 'Status'},
-      ];
+    {'value': 'date_newest', 'label': 'Date Created (Newest)'},
+    {'value': 'date_oldest', 'label': 'Date Created (Oldest)'},
+    {'value': 'destination_az', 'label': 'Destination (A-Z)'},
+    {'value': 'destination_za', 'label': 'Destination (Z-A)'},
+    {'value': 'driver_az', 'label': 'Driver Name (A-Z)'},
+    {'value': 'status', 'label': 'Status'},
+  ];
 
   void clearAllFilters() {
     searchController.clear();

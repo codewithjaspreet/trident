@@ -199,10 +199,9 @@ class TridentNavigationBar extends StatelessWidget {
         appBarTitle = 'My Trips';
         showAddButton = false; // Driver cannot add trips
         break;
-      case 'trip manager':
-      case 'tripmanager':
+      case 'Trip Manager':
         appBarTitle = 'Managed Trips';
-        showAddButton = false; // Trip manager cannot add trips
+        showAddButton = true; // Trip manager cannot add trips
         break;
       default:
         appBarTitle = 'All Trips';

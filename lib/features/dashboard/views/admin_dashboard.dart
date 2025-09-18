@@ -267,11 +267,16 @@ class AdminDashboard extends StatelessWidget {
 
   Widget _buildDriverAnalytics(
       DashBoardController controller, TripController tripController) {
-    // Filter trips assigned to this driver (you'll need to implement this logic)
-    final myTrips = controller.allCreatedTrips.where((trip) =>
-        // Add your logic to filter trips for this specific driver
-        // For now, showing all trips - replace with actual filtering
-        true).length;
+    // All trips assigned to this driver (adjust filtering if needed)
+    final myTrips = controller.allCreatedTrips;
+
+    // Completed trips
+    final completedTrips =
+        myTrips.where((trip) => trip.status == 'Completed').toList();
+
+    // Pending trips
+    final pendingTrips =
+        myTrips.where((trip) => trip.status == 'Open').toList();
 
     return GridView.count(
       shrinkWrap: true,
@@ -283,7 +288,7 @@ class AdminDashboard extends StatelessWidget {
       children: [
         _buildAnimatedAnalyticsCard(
           'My Trips',
-          myTrips.toString(),
+          myTrips.length.toString(),
           '',
           Icons.route_rounded,
           TColors.success,
@@ -291,7 +296,7 @@ class AdminDashboard extends StatelessWidget {
         ),
         _buildAnimatedAnalyticsCard(
           'Completed Today',
-          '${(myTrips * 0.3).toInt()}', // Example calculation
+          completedTrips.length.toString(),
           '',
           Icons.check_circle_rounded,
           TColors.info,
@@ -299,7 +304,7 @@ class AdminDashboard extends StatelessWidget {
         ),
         _buildAnimatedAnalyticsCard(
           'Pending Trips',
-          '${(myTrips * 0.4).toInt()}', // Example calculation
+          pendingTrips.length.toString(),
           '',
           Icons.pending_rounded,
           TColors.warning,
