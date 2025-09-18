@@ -1312,19 +1312,19 @@ class TripsManagementScreen extends StatelessWidget {
         _buildActionButton(
           Icons.tune_rounded,
           const Color(0xFF3B82F6),
-              () => _showFilterSheet(tripController, userRole),
+          () => _showFilterSheet(tripController, userRole),
         ),
         SizedBox(width: 8.w),
         _buildActionButton(
           Icons.sort_rounded,
           const Color(0xFFF59E0B),
-              () => _showSortSheet(tripController),
+          () => _showSortSheet(tripController),
         ),
         SizedBox(width: 8.w),
         _buildActionButton(
           Icons.refresh_rounded,
           const Color(0xFF10B981),
-              () => _refreshTrips(controller),
+          () => _refreshTrips(controller),
         ),
       ],
     );
@@ -1370,15 +1370,15 @@ class TripsManagementScreen extends StatelessWidget {
           ),
           suffixIcon: Obx(() => tripController.searchQuery.value.isNotEmpty
               ? GestureDetector(
-            onTap: () {
-              tripController.searchController.clear();
-            },
-            child: Icon(
-              Icons.clear_rounded,
-              size: 20.sp,
-              color: const Color(0xFF94A3B8),
-            ),
-          )
+                  onTap: () {
+                    tripController.searchController.clear();
+                  },
+                  child: Icon(
+                    Icons.clear_rounded,
+                    size: 20.sp,
+                    color: const Color(0xFF94A3B8),
+                  ),
+                )
               : const SizedBox.shrink()),
           filled: true,
           fillColor: Colors.transparent,
@@ -1488,15 +1488,20 @@ class TripsManagementScreen extends StatelessWidget {
 
       print('STATUS IS - $status');
 
-      // Get current user mobile for filtering
       final currentUserMobile = controller.loggedInUser.value.userMobileNumber;
 
-      // Use updated filtering method with user exclusion for in_review
-      final filteredTrips = tripController.getFilteredTripsForStatus(
-        controller.allCreatedTrips,
-        status,
-        currentUserMobile: currentUserMobile,
-      );
+      List<dynamic> filteredTrips = [];
+      if (status == 'in_review') {
+        controller.getAllReviewingTrips();
+
+        filteredTrips = controller.allReviewTrips;
+      } else {
+        filteredTrips = tripController.getFilteredTripsForStatus(
+          controller.allCreatedTrips,
+          status,
+          currentUserMobile: currentUserMobile,
+        );
+      }
 
       return Column(
         children: [
@@ -1514,7 +1519,8 @@ class TripsManagementScreen extends StatelessWidget {
                     trip: filteredTrips[index],
                     index: index,
                     userRole: userRole,
-                    currentUserMobile: currentUserMobile, // Pass current user mobile
+                    currentUserMobile:
+                        currentUserMobile, // Pass current user mobile
                   );
                 },
               ),
@@ -1859,7 +1865,7 @@ class TripCard extends StatelessWidget {
               'See complete trip information',
               Icons.visibility_outlined,
               const Color(0xFF3B82F6),
-                  () {
+              () {
                 final dashboardController = Get.find<DashBoardController>();
                 Get.to(const TripTimelineScreen(), arguments: [
                   trip.source,
@@ -1877,7 +1883,7 @@ class TripCard extends StatelessWidget {
                 'Modify trip details',
                 Icons.edit_outlined,
                 const Color(0xFFF59E0B),
-                    () {
+                () {
                   Get.to(TripEditScreen(trip: trip));
                 },
               ),
@@ -1891,12 +1897,12 @@ class TripCard extends StatelessWidget {
 
   /// Builds action tile for bottom sheet
   Widget _buildActionTile(
-      String title,
-      String subtitle,
-      IconData icon,
-      Color color,
-      VoidCallback onTap,
-      ) {
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       leading: Container(
         width: 40.w,
@@ -2087,11 +2093,11 @@ class FilterBottomSheet extends StatelessWidget {
   }
 
   Widget _buildFilterSection(
-      String title,
-      List<Map<String, String>> options,
-      RxString selectedValue,
-      Function(String) onChanged,
-      ) {
+    String title,
+    List<Map<String, String>> options,
+    RxString selectedValue,
+    Function(String) onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2105,38 +2111,38 @@ class FilterBottomSheet extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         Obx(() => Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
-          children: options.map((option) {
-            final isSelected = selectedValue.value == option['value'];
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: options.map((option) {
+                final isSelected = selectedValue.value == option['value'];
 
-            return FilterChip(
-              label: Text(
-                option['label']!,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color:
-                  isSelected ? Colors.white : const Color(0xFF374151),
-                ),
-              ),
-              selected: isSelected,
-              selectedColor: const Color(0xFF3B82F6),
-              backgroundColor: const Color(0xFFF8FAFC),
-              side: BorderSide(
-                color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFFE2E8F0),
-                width: 1,
-              ),
-              onSelected: (selected) {
-                if (selected) {
-                  onChanged(option['value']!);
-                }
-              },
-            );
-          }).toList(),
-        )),
+                return FilterChip(
+                  label: Text(
+                    option['label']!,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                      color:
+                          isSelected ? Colors.white : const Color(0xFF374151),
+                    ),
+                  ),
+                  selected: isSelected,
+                  selectedColor: const Color(0xFF3B82F6),
+                  backgroundColor: const Color(0xFFF8FAFC),
+                  side: BorderSide(
+                    color: isSelected
+                        ? const Color(0xFF3B82F6)
+                        : const Color(0xFFE2E8F0),
+                    width: 1,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) {
+                      onChanged(option['value']!);
+                    }
+                  },
+                );
+              }).toList(),
+            )),
       ],
     );
   }
@@ -2327,10 +2333,10 @@ class SortBottomSheet extends StatelessWidget {
                   ),
                   trailing: isSelected
                       ? Icon(
-                    Icons.check_rounded,
-                    size: 20.sp,
-                    color: const Color(0xFF3B82F6),
-                  )
+                          Icons.check_rounded,
+                          size: 20.sp,
+                          color: const Color(0xFF3B82F6),
+                        )
                       : null,
                   onTap: () {
                     tripController.updateSortOption(option['value']!);

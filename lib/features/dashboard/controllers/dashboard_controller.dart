@@ -44,9 +44,7 @@ class DashBoardController extends GetxController {
     print('Logged in user role: ${loggedInUser.value.userRole}');
     if (loggedInUser.value.userRole == 'driver') {
       await getAllDriverAssignedTrips();
-    }
-    else {
-
+    } else {
       await getAllCreatedTrips();
     }
   }
@@ -64,12 +62,13 @@ class DashBoardController extends GetxController {
   Future<void> getAllCreatedTrips() async {
     final rawMobile = loggedInUser.value.userMobileNumber.trim();
 
-    final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
+    final formattedMobile =
+        rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
 
     try {
       final snapshot = await _fireStore
           .collection('trips')
-          .where('created_by', isEqualTo: formattedMobile )
+          .where('created_by', isEqualTo: formattedMobile)
           .get();
 
       allCreatedTrips.value = snapshot.docs
@@ -81,7 +80,6 @@ class DashBoardController extends GetxController {
           return bDate.compareTo(aDate);
         });
       update();
-
     } catch (e) {
       print('Error fetching admin trips: $e');
     }
@@ -89,7 +87,8 @@ class DashBoardController extends GetxController {
 
   Future<void> getAllReviewingTrips() async {
     final rawMobile = loggedInUser.value.userMobileNumber.trim();
-    final formattedMobile = rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
+    final formattedMobile =
+        rawMobile.startsWith('+91') ? rawMobile : '+91$rawMobile';
 
     try {
       // First, get all trips that are in review
@@ -101,9 +100,9 @@ class DashBoardController extends GetxController {
       // Filter out the current user's trips in memory
       allReviewTrips.value = snapshot.docs
           .where((doc) {
-        final data = doc.data();
-        return data['created_by'] != formattedMobile;
-      })
+            final data = doc.data();
+            return data['created_by'] != formattedMobile;
+          })
           .map((doc) => TripModel.fromJson(doc.data()))
           .toList()
         ..sort((a, b) {
@@ -111,8 +110,6 @@ class DashBoardController extends GetxController {
           final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
           return bDate.compareTo(aDate);
         });
-
-
     } catch (e) {
       print('Error fetching review trips: $e');
     }
@@ -134,7 +131,7 @@ class DashBoardController extends GetxController {
       if (driverSnapshot.docs.isEmpty) return;
 
       final driverName =
-      driverSnapshot.docs.first['driverName']?.toString().trim();
+          driverSnapshot.docs.first['driverName']?.toString().trim();
       if (driverName == null || driverName.isEmpty) return;
 
       final tripSnapshot = await _fireStore
@@ -142,8 +139,6 @@ class DashBoardController extends GetxController {
           .where('driver_name', isEqualTo: driverName)
           .where('in_review', isEqualTo: false)
           .get();
-
-
 
       allCreatedTrips.value = tripSnapshot.docs
           .map((doc) => TripModel.fromJson(doc.data()))
@@ -153,12 +148,8 @@ class DashBoardController extends GetxController {
           final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
           return bDate.compareTo(aDate); // latest first
         });
-
     } catch (_) {}
   }
-
-
-
 
   String _normalizeMobile(String number) {
     final digitsOnly = number.replaceAll(RegExp(r'\D'), '');
