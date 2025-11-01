@@ -260,13 +260,52 @@ class TripController extends GetxController {
   }
 
   // Method to clear form
-  void clearTripForm() {
+  // void clearTripForm() {
+  //   selectedConsignor.value = '';
+  //   selectedDestination.value = '';
+  //   selectedSource.value = '';
+  //   tripType.value = '';
+  // }
+
+  void clearAllTripData() {
+    // Date & Basic Info
+    selectedTripDate.value = null;
+    selectedBilledTo.value = '';
+    selectedBusinessVertical.value = '';
+    selectedBilledVehicle.value = '';
+
+    // Route & Consignee Info
+    selectedDriver.value = '';
+    selectedSource.value = '';
     selectedConsignor.value = '';
     selectedDestination.value = '';
-    selectedSource.value = '';
-    tripType.value = '';
-  }
+    selectedConsignee.value = null;
 
+    // Trip Type
+    tripType.value = 'OS';
+
+    // Lists
+    allConsigneesMappedToConsignor.clear();
+    customStages.clear();
+
+    // Stages
+    isStagesInitialized.value = false;
+
+    // Navigation - Reset page controller safely
+    if (pageController.hasClients) {
+      pageController.jumpToPage(0);
+    }
+    pageIndex.value = 0;
+
+    // Edit Mode
+    isEditMode.value = false;
+    originalTrip.value = null;
+
+    // Form Keys - Reset validation
+    tripFormKeyA.currentState?.reset();
+    tripFormKeyB.currentState?.reset();
+    tripFormKeyC.currentState?.reset();
+  }
   // ================== EDIT FUNCTIONALITY ==================
 
   /// Initialize edit form with trip data

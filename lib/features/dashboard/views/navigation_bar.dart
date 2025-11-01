@@ -8,7 +8,9 @@ import 'package:trident/features/trips/views/all_trips.dart';
 import 'package:trident/features/trips/widgets/add_trip_mobile.dart';
 import 'package:trident/utils/constants/colors.dart';
 
+import '../../../common/widgets/layouts/sidebars/side_bar_controller.dart';
 import '../../../utils/coming_soon.dart';
+import '../../trips/controllers/trip_controller.dart';
 import 'admin_dashboard.dart';
 
 class TridentNavigationBar extends StatelessWidget {
@@ -94,6 +96,9 @@ class TridentNavigationBar extends StatelessWidget {
                               padding: EdgeInsets.zero,
                             ),
                             onPressed: () {
+
+                              Get.put(TripController());
+                              Get.put(SideBarController());
                               Get.to(const AddTripMobile());
                             },
                             child: const Icon(Icons.add,

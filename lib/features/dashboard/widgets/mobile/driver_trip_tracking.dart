@@ -449,7 +449,6 @@ class TripTimelineScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildCompleteButton(
       String tripId, String userRole, TripController controller) {
     return SizedBox(
@@ -466,6 +465,7 @@ class TripTimelineScreen extends StatelessWidget {
 
           if (shouldProceed) {
             try {
+              // Use the controller parameter passed to this method
               await FirebaseFirestore.instance
                   .collection('trips')
                   .doc(tripId)
@@ -487,9 +487,19 @@ class TripTimelineScreen extends StatelessWidget {
                 borderRadius: 12.r,
                 icon: const Icon(Icons.check_circle, color: Color(0xFF10B981)),
               );
-              Get.offAllNamed(TRoutes.navigationBar);
+
+              // Navigate back safely
+              Get.until((route) => Get.currentRoute == TRoutes.navigationBar);
             } catch (e) {
-              // controller.showErrorMessage('Error'.tr, 'Something went wrong while completing the trip.'.tr);
+              Get.snackbar(
+                'Error'.tr,
+                'Something went wrong while completing the trip.'.tr,
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red[100],
+                colorText: Colors.red[800],
+                margin: EdgeInsets.all(16.w),
+                borderRadius: 12.r,
+              );
             }
           }
         },
@@ -510,6 +520,66 @@ class TripTimelineScreen extends StatelessWidget {
       ),
     );
   }
+  // Widget _buildCompleteButton(
+  //     String tripId, String userRole, TripController controller) {
+  //   return SizedBox(
+  //     width: double.infinity,
+  //     height: 48.h,
+  //     child: ElevatedButton(
+  //       onPressed: () async {
+  //         bool shouldProceed = true;
+  //
+  //         if (userRole == 'admin') {
+  //           shouldProceed =
+  //               await _showTripCompletionConfirmationDialog() ?? false;
+  //         }
+  //
+  //         if (shouldProceed) {
+  //           try {
+  //             await FirebaseFirestore.instance
+  //                 .collection('trips')
+  //                 .doc(tripId)
+  //                 .update({
+  //               'trip_status': 'Completed',
+  //               'completed_by': userRole,
+  //               'completed_at': FieldValue.serverTimestamp(),
+  //             });
+  //
+  //             Get.snackbar(
+  //               'Trip Completed'.tr,
+  //               userRole == 'admin'
+  //                   ? 'Trip marked as completed by admin successfully!'.tr
+  //                   : 'Trip marked as completed successfully!'.tr,
+  //               snackPosition: SnackPosition.BOTTOM,
+  //               backgroundColor: const Color(0xFFF0FDF4),
+  //               colorText: const Color(0xFF059669),
+  //               margin: EdgeInsets.all(16.w),
+  //               borderRadius: 12.r,
+  //               icon: const Icon(Icons.check_circle, color: Color(0xFF10B981)),
+  //             );
+  //             Get.offAllNamed(TRoutes.navigationBar);
+  //           } catch (e) {
+  //             // controller.showErrorMessage('Error'.tr, 'Something went wrong while completing the trip.'.tr);
+  //           }
+  //         }
+  //       },
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Color(0xFF4A90E2),
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(8.r),
+  //         ),
+  //       ),
+  //       child: Text(
+  //         userRole == 'admin' ? 'Complete Trip (Admin)'.tr : 'Complete Trip'.tr,
+  //         style: TextStyle(
+  //           color: Colors.white,
+  //           fontSize: 16.sp,
+  //           fontWeight: FontWeight.w600,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<bool?> _showTripCompletionConfirmationDialog() async {
     return await Get.dialog<bool>(

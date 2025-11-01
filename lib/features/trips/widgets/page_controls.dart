@@ -32,11 +32,11 @@ class PageControls extends StatelessWidget {
       final currentPage = tripController.pageIndex.value;
 
       return Row(
-        mainAxisAlignment: isDesktop ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+        mainAxisAlignment:
+            isDesktop ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
         children: [
           /// Left Button: Cancel / Previous (Mobile only or step 1 on mobile)
-          if (!isDesktop)
-            _buildLeftButton(currentPage),
+          if (!isDesktop) _buildLeftButton(currentPage),
 
           /// Right Button: Next / Continue / Save
           _buildRightButton(currentPage, isDesktop),
@@ -136,7 +136,9 @@ class PageControls extends StatelessWidget {
                 ),
                 SizedBox(width: 6.w),
                 Icon(
-                  currentPage == 2 ? Icons.check_circle : Icons.arrow_forward_ios,
+                  currentPage == 2
+                      ? Icons.check_circle
+                      : Icons.arrow_forward_ios,
                   size: 14.sp,
                   color: Colors.white,
                 ),
@@ -190,9 +192,6 @@ class PageControls extends StatelessWidget {
         if (tripController.selectedBilledVehicle.value.isEmpty) {
           missingFields.add('Billed Vehicle');
         }
-
-
-
 
         _showValidationError(missingFields);
         return;
@@ -321,17 +320,17 @@ class PageControls extends StatelessWidget {
         );
 
         // Clear the form
-        tripController.clearTripForm();
+        tripController.clearAllTripData();
 
         // Navigate back to dashboard
         if (isDesktop) {
           sideBarController.menuOnTap(TRoutes.allTrips);
-          tripController.changePage(0);
+          // tripController.changePage(0);
         } else {
-          Get.off(() =>  TridentNavigationBar());
-          tripController.changePage(0);
+          Get.off(() => TridentNavigationBar());
+          Get.delete<TripController>();
+          // tripController.changePage(0);
         }
-
       } catch (e) {
         // Close loading dialog
         Get.back();
