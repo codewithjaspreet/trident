@@ -15,6 +15,9 @@ class TRoutes{
   static const String otpScreen = '/otp';
   static const String splashScreen = '/splash';
   static const String navigationBar = '/navigationBar';
+  static const String analyticsScreen = '/analytics';
+  static const String driversScreen = '/drivers';
+  static const String vehiclesScreen = '/vehicles';
 
 
   static List sideBarMenuItems = [

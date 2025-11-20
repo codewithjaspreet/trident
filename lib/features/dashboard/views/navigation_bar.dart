@@ -4,12 +4,16 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:trident/features/dashboard/controllers/dashboard_controller.dart';
+import 'package:trident/features/drivers/views/driver_listing.dart';
+import 'package:trident/features/vehicles/views/vehicle_listing.dart';
 import 'package:trident/features/trips/views/all_trips.dart';
 import 'package:trident/features/trips/widgets/add_trip_mobile.dart';
 import 'package:trident/utils/constants/colors.dart';
 
 import '../../../common/widgets/layouts/sidebars/side_bar_controller.dart';
 import '../../../utils/coming_soon.dart';
+import '../../analytics/views/report_screen.dart';
+import '../../auth/controllers/auth_controller.dart';
 import '../../trips/controllers/trip_controller.dart';
 import 'admin_dashboard.dart';
 
@@ -20,6 +24,7 @@ class TridentNavigationBar extends StatelessWidget {
       Get.put(NavigationController());
   final DashBoardController dashBoardController =
       Get.put(DashBoardController());
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +123,16 @@ class TridentNavigationBar extends StatelessWidget {
                   body: const AllTripsSection(),
                 );
                 break;
+
+              case '/analytics':
+                page = ReportScreen();
+                break;
+              case '/drivers':
+                page = const DriverListingScreen();
+                break;
+              case '/vehicles':
+                page = const VehicleListingScreen();
+                break;
               default:
                 page = const AdminDashboard();
             }
@@ -148,18 +163,27 @@ class TridentNavigationBar extends StatelessWidget {
     } else {
       // For drivers and other roles - FIXED: Add nested navigation for all roles
       return [
-        // First tab: Dashboard with nested navigation for trips
         Navigator(
           key: navigationController
-              .driverNavigatorKey, // Use driver navigator key
+              .driverNavigatorKey,
           onGenerateRoute: (settings) {
             Widget page;
             switch (settings.name) {
               case '/':
-                page = const AdminDashboard(); // This now handles all roles
+                page = const AdminDashboard();
                 break;
               case '/allTrips':
                 page = _buildTripsPageForRole(userRole);
+                break;
+
+              case '/analytics':
+                page = ReportScreen();
+                break;
+              case '/drivers':
+                page = const DriverListingScreen();
+                break;
+              case '/vehicles':
+                page = const VehicleListingScreen();
                 break;
               default:
                 page = const AdminDashboard();
@@ -449,6 +473,32 @@ class NavigationController extends GetxController {
 
       if (navigatorKey != null) {
         navigatorKey.currentState?.pushNamed('/allTrips');
+      }
+    }
+  }
+
+  void navigateToAnalytics(){
+    final navigatorKey = getCurrentNavigatorKey();
+
+    if (navigatorKey != null) {
+      navigatorKey.currentState?.pushNamed('/analytics');
+    }
+  }
+
+  void navigateToDrivers(){
+    final navigatorKey = getCurrentNavigatorKey();
+
+    if (navigatorKey != null) {
+      navigatorKey.currentState?.pushNamed('/drivers');
+    }
+  }
+
+  void navigateToVehicles(){
+    if (currentIndex.value == 0) {
+      final navigatorKey = getCurrentNavigatorKey();
+
+      if (navigatorKey != null) {
+        navigatorKey.currentState?.pushNamed('/vehicles');
       }
     }
   }

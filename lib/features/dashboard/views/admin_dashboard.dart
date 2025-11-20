@@ -13,7 +13,9 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashBoardController controller = Get.put(DashBoardController());
-    final AuthController authController = Get.find<AuthController>();
+    final AuthController authController = Get.isRegistered<AuthController>()
+        ? Get.find<AuthController>()
+        : Get.put(AuthController());
 
     return Scaffold(
       backgroundColor: TColors.primaryBackground,
@@ -669,9 +671,11 @@ class AdminDashboard extends StatelessWidget {
 
     switch (title.toLowerCase()) {
       case 'drivers':
+        navController.navigateToDrivers();
         print('Navigate to Drivers');
         break;
       case 'vehicles':
+        navController.navigateToVehicles();
         print('Navigate to Vehicles');
         break;
       case 'trips':
@@ -680,7 +684,7 @@ class AdminDashboard extends StatelessWidget {
         print('Navigate to Trips');
         break;
       case 'analytics':
-        print('Navigate to Analytics');
+        navController.navigateToAnalytics();
         break;
       case 'reviews':
         print('Navigate to Reviews');
